@@ -1,6 +1,5 @@
 import logging
 import os
-
 # import argparse
 from logging.handlers import RotatingFileHandler
 
@@ -15,6 +14,9 @@ handler = RotatingFileHandler("flask_log.log", maxBytes=100000, backupCount=1)
 handler.setLevel(logging.INFO)
 app.logger.addHandler(handler)
 
+# import other parts of the app
+# (Must be done after creating app due to circular imports)
+from .blueprints import tree
 
 # parser = argparse.ArgumentParser()
 # parser.add_argument(
@@ -24,8 +26,9 @@ app.logger.addHandler(handler)
 
 # app.path = args.file_path
 
-
 @app.route("/")
 def index():
-    print(app.__dict__)
     return "Hello world!"
+
+
+app.register_blueprint(tree.blueprint)
