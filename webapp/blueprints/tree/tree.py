@@ -19,6 +19,9 @@ def show_tree():
 
     tr = TreeRenderer()
 
-    return tr.render_tree(app.config["HDF5_PATH"])
+    if "file" in app.config:
+        return tr.render_tree(app.config["file"])
+    else:
+        return "Please provide a file path first."
     # Render the compare template, passing along the dataframe json
     #return render_template('/data/data.html.j2')

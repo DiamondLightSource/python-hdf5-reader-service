@@ -1,5 +1,7 @@
 import logging
 import os
+import h5py
+from markupsafe import escape
 # import argparse
 from logging.handlers import RotatingFileHandler
 
@@ -7,7 +9,6 @@ from flask import Flask
 
 # Setup the app
 app = Flask(__name__, root_path=os.path.abspath(os.path.dirname(__file__)))
-app.config.from_pyfile("config.py")
 
 # Set up logging
 handler = RotatingFileHandler("flask_log.log", maxBytes=100000, backupCount=1)
@@ -26,9 +27,15 @@ from .blueprints import tree
 
 # app.path = args.file_path
 
+
 @app.route("/")
 def index():
-    return "Hello world!"
+    return "Please provide a path to the HDF5 file after the '/'."
+
+@app.route("/<path:file>")
+def add_file(file):
+    app.config["file"] = "/" + file
+    return f"Added file path: {escape(file)}"
 
 
 app.register_blueprint(tree.blueprint)
