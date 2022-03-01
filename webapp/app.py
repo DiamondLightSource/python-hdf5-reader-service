@@ -1,6 +1,5 @@
 import logging
 import os
-import h5py
 from markupsafe import escape
 # import argparse
 from logging.handlers import RotatingFileHandler
@@ -17,7 +16,7 @@ app.logger.addHandler(handler)
 
 # import other parts of the app
 # (Must be done after creating app due to circular imports)
-from .blueprints import tree
+from .blueprints import tree, meta
 
 # parser = argparse.ArgumentParser()
 # parser.add_argument(
@@ -39,3 +38,4 @@ def add_file(file):
 
 
 app.register_blueprint(tree.blueprint)
+app.register_blueprint(meta.blueprint)
