@@ -16,7 +16,7 @@ app.logger.addHandler(handler)
 
 # import other parts of the app
 # (Must be done after creating app due to circular imports)
-from .blueprints import tree, meta
+from .blueprints import tree, meta, search
 
 # parser = argparse.ArgumentParser()
 # parser.add_argument(
@@ -39,3 +39,4 @@ def add_file(file):
 
 app.register_blueprint(tree.blueprint)
 app.register_blueprint(meta.blueprint)
+app.register_blueprint(search.blueprint)
