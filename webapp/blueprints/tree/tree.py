@@ -1,6 +1,4 @@
-from flask import Blueprint
 from flask import current_app as app
-from flask import render_template
 
 from . import blueprint
 from .h5tree import TreeRenderer
