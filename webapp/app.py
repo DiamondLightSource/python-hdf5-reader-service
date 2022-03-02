@@ -16,7 +16,7 @@ app.logger.addHandler(handler)
 
 # import other parts of the app
 # (Must be done after creating app due to circular imports)
-from .blueprints import tree, meta, search
+from .blueprints import tree, meta, search, slice
 
 # parser = argparse.ArgumentParser()
 # parser.add_argument(
@@ -31,7 +31,7 @@ from .blueprints import tree, meta, search
 def index():
     return "Please provide a path to the HDF5 file after the '/'."
 
-@app.route("/<path:file>")
+@app.route("/file/<path:file>")
 def add_file(file):
     app.config["file"] = "/" + file
     return f"Added file path: {escape(file)}"
@@ -40,3 +40,4 @@ def add_file(file):
 app.register_blueprint(tree.blueprint)
 app.register_blueprint(meta.blueprint)
 app.register_blueprint(search.blueprint)
+app.register_blueprint(slice.blueprint)
