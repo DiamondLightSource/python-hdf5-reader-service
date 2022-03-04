@@ -9,12 +9,12 @@ app = FastAPI(root_path=os.path.abspath(os.path.dirname(__file__)))
 
 # import other parts of the app
 # (Must be done after creating app due to circular imports)
-from .blueprints import tree, meta, search#, slice
+from .blueprints import tree, meta, search, slice
 
 app.include_router(tree.router)
 app.include_router(meta.router)
 app.include_router(search.router)
-#app.include_router(slice.router)
+app.include_router(slice.router)
 
 
 @app.get("/")
