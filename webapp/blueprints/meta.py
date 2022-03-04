@@ -1,54 +1,55 @@
-from flask import current_app as app
+from fastapi import APIRouter
 import h5py
 import os
 import sys
-from flask.json import JSONEncoder
 
-from . import blueprint
+router = APIRouter()
 
 SWMR_DEFAULT = bool(int(os.getenv("HDF5_SWMR_DEFAULT", "1")))
 
 # Setup blueprint route
-@blueprint.route("/metadata/", defaults={"subpath": None}, methods=["GET"])
-@blueprint.route("/metadata/<path:subpath>", methods=["GET"])
-def get_meta(subpath):
+@router.get("/metadata/{path:path}")
+def get_meta(path: str, subpath: str = "/"):
     """Function that tells flask to output the metadata of the HDF5 file node.
 
     Returns:
         template: A rendered Jinja2 HTML template
     """
 
-    app.logger.info("-> meta")
+    path = "/" + path
 
-    file = app.config["file"]
+    try:
+        with h5py.File(path, "r", swmr=SWMR_DEFAULT, libver="latest") as file:
+            if subpath:
+                meta = metadata(file[subpath])
+            else:
+                meta = metadata(file["/"])
+            return meta
 
-    if not isinstance(file, h5py.File):
-        try:
-
-            with h5py.File(
-                app.config["file"], "r", swmr=SWMR_DEFAULT, libver="latest"
-            ) as file:
-                if subpath:
-                    meta = metadata(file[subpath])
-                else:
-                    meta = metadata(file["/"])
-                return meta
-
-        except:
-            print(f"File {file} can not be opened yet.")
+    except Exception as e:
+        print(e)
+        # print(f"File {file} can not be opened yet.")
 
 
 def metadata(node):
-    d = safe_json_dump(dict(node.attrs))
-    # for k, v in list(d.items()):
-    #     # Convert any bytes to str.
-    #     d[k] = safe_json_dump(v)
-    return d
+    metadata = dict(node.attrs)
 
+    data = {"data": {"attributes": {"metadata": metadata}}}
 
-class JSON_Improved(JSONEncoder):
+    if isinstance(node, h5py.Dataset):
+        shape = node.maxshape
+        chunks = node.chunks
+        itemsize = node.dtype.itemsize
+        kind = node.dtype.kind
+        # endianness = dtype.endiannness if dtype.endiannness else "not_applicable"
 
-    pass
+        macro = {"chunks": chunks, "shape": shape}
+        micro = {"itemsize": itemsize, "kind": kind}
+        structure = {"macro": macro, "micro": micro}
+
+        data["data"]["attributes"]["structure"] = structure
+
+    return safe_json_dump(data)
 
 
 def safe_json_dump(content):

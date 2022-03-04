@@ -1,41 +1,33 @@
-from flask import current_app as app
+from fastapi import APIRouter
 import h5py
 import os
 import sys
-from flask.json import JSONEncoder
 
-from . import blueprint
+router = APIRouter()
 
 SWMR_DEFAULT = bool(int(os.getenv("HDF5_SWMR_DEFAULT", "1")))
 
 # Setup blueprint route
-@blueprint.route("/search/", defaults={"subpath": None}, methods=["GET"])
-@blueprint.route("/search/<path:subpath>", methods=["GET"])
-def get_nodes(subpath):
+@router.get("/search/{path:path}")
+def get_nodes(path: str, subpath: str = "/"):
     """Function that tells flask to output the subnodes of the HDF5 file node.
 
     Returns:
         template: A rendered Jinja2 HTML template
     """
+    path = "/" + path
 
-    app.logger.info("-> search")
+    try:
 
-    file = app.config["file"]
+        with h5py.File(path, "r", swmr=SWMR_DEFAULT, libver="latest") as file:
+            if subpath:
+                nodes = search(file[subpath])
+            else:
+                nodes = search(file["/"])
+            return nodes
 
-    if not isinstance(file, h5py.File):
-        try:
-
-            with h5py.File(
-                app.config["file"], "r", swmr=SWMR_DEFAULT, libver="latest"
-            ) as file:
-                if subpath:
-                    nodes = search(file[subpath])
-                else:
-                    nodes = search(file["/"])
-                return nodes
-
-        except:
-            print(f"File {file} can not be opened yet.")
+    except:
+        print(f"File {file} can not be opened yet.")
 
 
 def search(node):
