@@ -1,4 +1,6 @@
 import sys
+from typing import Any
+from starlette.responses import JSONResponse
 
 def safe_json_dump(content):
     """
@@ -22,3 +24,11 @@ def safe_json_dump(content):
     # Not all numpy dtypes are supported by orjson.
     # Fall back to converting to a (possibly nested) Python list.
     return orjson.dumps(content, option=orjson.OPT_SERIALIZE_NUMPY, default=default)
+
+
+class NumpySafeJSONResponse(JSONResponse):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def render(self, content: Any) -> bytes:
+        return safe_json_dump(content)

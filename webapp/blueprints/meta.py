@@ -1,7 +1,8 @@
+from typing import Any, Mapping
 from fastapi import APIRouter
 import h5py
 import os
-from ..utils import safe_json_dump
+from ..utils import NumpySafeJSONResponse
 
 router = APIRouter()
 
@@ -21,9 +22,9 @@ def get_meta(path: str, subpath: str = "/"):
     try:
         with h5py.File(path, "r", swmr=SWMR_DEFAULT, libver="latest") as file:
             if subpath:
-                meta = metadata(file[subpath])
+                meta = NumpySafeJSONResponse(metadata(file[subpath]))
             else:
-                meta = metadata(file["/"])
+                meta = NumpySafeJSONResponse(metadata(file["/"]))
             return meta
 
     except Exception as e:
@@ -31,7 +32,7 @@ def get_meta(path: str, subpath: str = "/"):
         # print(f"File {file} can not be opened yet.")
 
 
-def metadata(node):
+def metadata(node: h5py.HLObject) -> Mapping[str, Any]:
     metadata = dict(node.attrs)
 
     data = {"data": {"attributes": {"metadata": metadata}}}
@@ -49,4 +50,4 @@ def metadata(node):
 
         data["data"]["attributes"]["structure"] = structure
 
-    return safe_json_dump(data)
+    return data

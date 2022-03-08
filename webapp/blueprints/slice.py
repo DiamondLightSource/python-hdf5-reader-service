@@ -1,7 +1,7 @@
 import h5py
 import os
 import re
-from fastapi import APIRouter, Query
+from fastapi import APIRouter
 from ..utils import safe_json_dump
 
 router = APIRouter()

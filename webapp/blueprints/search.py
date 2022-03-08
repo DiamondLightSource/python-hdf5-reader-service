@@ -1,7 +1,8 @@
+from ast import Num
 from fastapi import APIRouter
 import h5py
 import os
-from ..utils import safe_json_dump
+from ..utils import NumpySafeJSONResponse
 
 router = APIRouter()
 
@@ -21,9 +22,9 @@ def get_nodes(path: str, subpath: str = "/"):
 
         with h5py.File(path, "r", swmr=SWMR_DEFAULT, libver="latest") as file:
             if subpath:
-                nodes = search(file[subpath])
+                nodes = NumpySafeJSONResponse(search(file[subpath]))
             else:
-                nodes = search(file["/"])
+                nodes = NumpySafeJSONResponse(search(file["/"]))
             return nodes
 
     except:
@@ -31,5 +32,5 @@ def get_nodes(path: str, subpath: str = "/"):
 
 
 def search(node):
-    subnodes = safe_json_dump({"nodes": list(node.keys())})
+    subnodes = {"nodes": list(node.keys())}
     return subnodes
