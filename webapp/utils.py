@@ -1,6 +1,9 @@
+import threading
 import sys
 from typing import Any
 from starlette.responses import JSONResponse
+
+LOCK = threading.Lock()
 
 def safe_json_dump(content):
     """

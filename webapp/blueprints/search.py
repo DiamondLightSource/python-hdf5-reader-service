@@ -1,8 +1,8 @@
-from ast import Num
+import time
 from fastapi import APIRouter
 import h5py
 import os
-from ..utils import NumpySafeJSONResponse
+from ..utils import NumpySafeJSONResponse, LOCK
 
 router = APIRouter()
 
@@ -16,19 +16,20 @@ def get_nodes(path: str, subpath: str = "/"):
     Returns:
         template: A rendered Jinja2 HTML template
     """
-    path = "/" + path
+    with LOCK:
 
-    try:
+        path = "/" + path
 
-        with h5py.File(path, "r", swmr=SWMR_DEFAULT, libver="latest") as file:
-            if subpath:
-                nodes = NumpySafeJSONResponse(search(file[subpath]))
-            else:
-                nodes = NumpySafeJSONResponse(search(file["/"]))
-            return nodes
+        try:
+            with h5py.File(path, "r", swmr=SWMR_DEFAULT, libver="latest") as file:
+                if subpath:
+                    nodes = NumpySafeJSONResponse(search(file[subpath]))
+                else:
+                    nodes = NumpySafeJSONResponse(search(file["/"]))
+                return nodes
 
-    except:
-        print(f"File {file} can not be opened yet.")
+        except:
+            print(f"File {file} can not be opened yet.")
 
 
 def search(node):

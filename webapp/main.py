@@ -1,7 +1,7 @@
 import os
-from markupsafe import escape
+from .utils import LOCK
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Response, status
 
 # Setup the app
 app = FastAPI(root_path=os.path.abspath(os.path.dirname(__file__)))
@@ -20,3 +20,10 @@ app.include_router(slice.router)
 @app.get("/")
 def index():
     return {"INFO": "Please provide a path to the HDF5 file, e.g. '/file/<path>'."}
+
+
+@app.get("/busy")
+def busy(response: Response):
+    if LOCK.locked():
+        response.status_code = status.HTTP_423_LOCKED
+    return {"busy": LOCK.locked()}

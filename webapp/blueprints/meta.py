@@ -2,7 +2,7 @@ from typing import Any, Mapping
 from fastapi import APIRouter
 import h5py
 import os
-from ..utils import NumpySafeJSONResponse
+from ..utils import NumpySafeJSONResponse, LOCK
 
 router = APIRouter()
 
@@ -16,20 +16,21 @@ def get_meta(path: str, subpath: str = "/"):
     Returns:
         template: A rendered Jinja2 HTML template
     """
+    with LOCK:
+        try:
 
-    path = "/" + path
+            path = "/" + path
 
-    try:
-        with h5py.File(path, "r", swmr=SWMR_DEFAULT, libver="latest") as file:
-            if subpath:
-                meta = NumpySafeJSONResponse(metadata(file[subpath]))
-            else:
-                meta = NumpySafeJSONResponse(metadata(file["/"]))
-            return meta
+            with h5py.File(path, "r", swmr=SWMR_DEFAULT, libver="latest") as file:
+                if subpath:
+                    meta = NumpySafeJSONResponse(metadata(file[subpath]))
+                else:
+                    meta = NumpySafeJSONResponse(metadata(file["/"]))
+                return meta
 
-    except Exception as e:
-        print(e)
-        # print(f"File {file} can not be opened yet.")
+        except Exception as e:
+            print(e)
+            # print(f"File {file} can not be opened yet.")
 
 
 def metadata(node: h5py.HLObject) -> Mapping[str, Any]:
