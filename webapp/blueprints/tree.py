@@ -1,5 +1,6 @@
 from collections import defaultdict
 import os
+import time
 from typing import Any, Dict, List, Union
 import h5py
 from fastapi import APIRouter
@@ -20,6 +21,9 @@ def show_tree(path: str, subpath: str = "/"):
         template: A rendered Jinja2 HTML template
     """
     with LOCK:
+
+        time.sleep(10)
+
         path = "/" + path
 
         tr = defaultdict(dict)
