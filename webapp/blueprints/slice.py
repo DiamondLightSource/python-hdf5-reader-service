@@ -34,18 +34,12 @@ def get_slice(path: str, subpath: str = "/", slice: str = None):
             return "Please enter a valid url, e.g. \
                 '/slice/<path>?subpath=<subpath>?slice=<slice>'"
 
-        try:
-            with h5py.File(path, "r", swmr=SWMR_DEFAULT, libver="latest") as file:
-                try:
-                    if subpath and isinstance(file[subpath], h5py.Dataset):
-                        sliced = file[subpath][slice_start:slice_stop:slice_step]
-                        return NumpySafeJSONResponse(sliced)
-                    else:
-                        # meta = metadata(file["/"])
-                        print("Path not valid or not a dataset.")
-                    # return meta
-                except Exception as e:
-                    print(e)
+        with h5py.File(path, "r", swmr=SWMR_DEFAULT, libver="latest") as file:
+            if subpath and isinstance(file[subpath], h5py.Dataset):
+                sliced = file[subpath][slice_start:slice_stop:slice_step]
+                return NumpySafeJSONResponse(sliced)
+            else:
+                # meta = metadata(file["/"])
+                raise Exception("Path not valid or not a dataset.")
+            # return meta
 
-        except:
-            print(f"File {file} can not be opened yet.")
