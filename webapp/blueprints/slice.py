@@ -2,7 +2,7 @@ import h5py
 import os
 import re
 from fastapi import APIRouter
-from ..utils import safe_json_dump, LOCK
+from ..utils import NumpySafeJSONResponse, LOCK
 
 router = APIRouter()
 
@@ -39,7 +39,7 @@ def get_slice(path: str, subpath: str = "/", slice: str = None):
                 try:
                     if subpath and isinstance(file[subpath], h5py.Dataset):
                         sliced = file[subpath][slice_start:slice_stop:slice_step]
-                        return safe_json_dump(sliced)
+                        return NumpySafeJSONResponse(sliced)
                     else:
                         # meta = metadata(file["/"])
                         print("Path not valid or not a dataset.")
