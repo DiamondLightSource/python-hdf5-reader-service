@@ -53,7 +53,7 @@ jobs:
           builder: ${{ steps.buildx.output.name }}
           push: false
           tags: user/hdf5-reader-service:test
-          target: runtime
+          target: base
           load: true
           cache-from: type=local,src=~/cache
           cache-to: type=local,dest=~/cache
@@ -62,24 +62,13 @@ jobs:
         run: |
           docker run --rm user/hdf5-reader-service:test
       
-      - name: Run multi-stage build (runtime container)
+      - name: Run multi-stage build (base container)
         uses: docker/build-push-action@v2
         with:
           builder: ${{ steps.buildx.output.name }}
           push: true
           tags: |
             ghcr.io/${{ github.repository }}:${{ steps.tagger.outputs.image_tag }}
-          target: runtime
-          cache-from: type=local,src=~/cache
-          cache-to: type=local,dest=~/cache
-      
-      - name: Run multi-stage build (developer container)
-        uses: docker/build-push-action@v2
-        with:
-          builder: ${{ steps.buildx.output.name }}
-          push: true
-          tags: |
-            ghcr.io/${{ github.repository }}:${{ steps.tagger.outputs.image_tag }}.dev
-          target: developer
+          target: base
           cache-from: type=local,src=~/cache
           cache-to: type=local,dest=~/cache
