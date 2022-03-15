@@ -1,6 +1,6 @@
+from typing import Optional
 import h5py
 import os
-import re
 from fastapi import APIRouter
 from ..utils import NumpySafeJSONResponse, LOCK
 
@@ -10,8 +10,9 @@ SWMR_DEFAULT = bool(int(os.getenv("HDF5_SWMR_DEFAULT", "1")))
 
 # Setup blueprint route
 @router.get("/slice/{path:path}")
-def get_slice(path: str, subpath: str = "/", slice: str = None):
+def get_slice(path: str, subpath: str = "/", slice_info: Optional[str] = None):
     """Function that tells flask to output the metadata of the HDF5 file node.
+       The slice_info parameter should take the form start:stop:steps,start:stop:steps,...
 
     Returns:
         template: A rendered Jinja2 HTML template
@@ -19,27 +20,20 @@ def get_slice(path: str, subpath: str = "/", slice: str = None):
     with LOCK:
         path = "/" + path
 
-        if slice is not None:
-            slices = re.search("(\d+):(\d+):(\d+)", slice)
-            if slice:
-                slice_start = int(slices[1])
-                slice_stop = int(slices[2])
-                slice_step = int(slices[3])
-            else:
-                print("Defaulting to 'all'.")
-                slice_start = 0
-                slice_stop = 0
-                slice_step = 0
+        if slice_info is not None:
+            # Create slice objects from strings, e.g.
+            # convert "1:2:1,3:4:1" to tuple(slice(1, 2, 1), slice(3, 4, 1))
+            slices = tuple(map(lambda t: slice(*map(int, t.split(":"))), slice_info.split(",")))
         else:
-            return "Please enter a valid url, e.g. \
-                '/slice/<path>?subpath=<subpath>?slice=<slice>'"
+            # Default to getting the whole dataset
+            slices = ...
 
-        with h5py.File(path, "r", swmr=SWMR_DEFAULT, libver="latest") as file:
-            if subpath and isinstance(file[subpath], h5py.Dataset):
-                sliced = file[subpath][slice_start:slice_stop:slice_step]
-                return NumpySafeJSONResponse(sliced)
+        with h5py.File(path, "r", swmr=SWMR_DEFAULT, libver="latest") as f:
+            if subpath in f:
+                dataset = f[subpath]
+                if isinstance(dataset, h5py.Dataset):
+                    return NumpySafeJSONResponse(dataset[slices])
+                else:
+                    raise Exception(f"Expected {subpath} to be a dataset, it is acually a {type(dataset)}")
             else:
-                # meta = metadata(file["/"])
-                raise Exception("Path not valid or not a dataset.")
-            # return meta
-
+                raise Exception(f"{path} does not contain {subpath}")
