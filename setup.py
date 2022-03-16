@@ -59,6 +59,11 @@ setup(
         "urllib3==1.26.8",
         "uvicorn==0.16.0",
         "Werkzeug==2.0.3",
+<<<<<<< HEAD
         "zipp==3.6.0",
     ],
+=======
+        "zipp==3.6.0"
+    ]
+>>>>>>> 4a3821a14ff3f44e8de43bf3786bd8d67c086e7e
 )
