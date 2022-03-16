@@ -3,16 +3,13 @@ from .utils import LOCK
 
 from fastapi import FastAPI, Response, status
 
+from .blueprints import info, tree, search, slice
+
 # Setup the app
 app = FastAPI(root_path=os.path.abspath(os.path.dirname(__file__)))
 
-
-# import other parts of the app
-# (Must be done after creating app due to circular imports)
-from .blueprints import tree, meta, search, slice
-
 app.include_router(tree.router)
-app.include_router(meta.router)
+app.include_router(info.router)
 app.include_router(search.router)
 app.include_router(slice.router)
 

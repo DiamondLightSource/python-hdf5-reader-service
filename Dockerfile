@@ -2,7 +2,7 @@
 FROM registry.hub.docker.com/library/python:3.9-slim AS base
 
 ENV PIP_DEPENDENCIES wheel pip
-ENV ENV_DIR /webapp
+ENV ENV_DIR /hdf5_reader_service
 
 ENV VIRTUAL_ENV=/opt/venv
 RUN python3 -m venv $VIRTUAL_ENV
@@ -16,9 +16,9 @@ RUN python3.9 -m pip install -r requirements.txt
 # Copy hdf5-reader-service code into container
 COPY . ${ENV_DIR}
 
-ENV ENV_DIR /webapp
+ENV ENV_DIR /hdf5_reader_service
 WORKDIR ${ENV_DIR}
 
 ENV PYTHON_SITE_PACKAGES /usr/local/lib/python3.9/site-packages
 
-CMD ["uvicorn", "webapp.main:app", "--host", "0.0.0.0"]
+CMD ["uvicorn", "hdf5_reader_service.main:app", "--host", "0.0.0.0"]
