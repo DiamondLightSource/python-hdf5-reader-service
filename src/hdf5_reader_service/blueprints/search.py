@@ -1,12 +1,14 @@
-import time
-from fastapi import APIRouter
-import h5py
 import os
-from ..utils import NumpySafeJSONResponse, LOCK
+
+import h5py
+from fastapi import APIRouter
+
+from ..utils import LOCK, NumpySafeJSONResponse
 
 router = APIRouter()
 
 SWMR_DEFAULT = bool(int(os.getenv("HDF5_SWMR_DEFAULT", "1")))
+
 
 # Setup blueprint route
 @router.get("/search/{path:path}")
@@ -26,7 +28,6 @@ def get_nodes(path: str, subpath: str = "/"):
             else:
                 nodes = NumpySafeJSONResponse(search(file["/"]))
             return nodes
-
 
 
 def search(node):

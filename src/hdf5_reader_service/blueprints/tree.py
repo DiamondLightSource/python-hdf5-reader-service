@@ -1,16 +1,18 @@
-from collections import defaultdict
 import os
 import time
+from collections import defaultdict
 from typing import Any, Dict, List, Union
+
 import h5py
 from fastapi import APIRouter
 
 from hdf5_reader_service.blueprints.info import metadata
-from hdf5_reader_service.utils import NumpySafeJSONResponse, LOCK
+from hdf5_reader_service.utils import LOCK, NumpySafeJSONResponse
 
 SWMR_DEFAULT = bool(int(os.getenv("HDF5_SWMR_DEFAULT", "1")))
 
 router = APIRouter()
+
 
 # Setup blueprint route
 @router.get("/tree/{path:path}")
@@ -44,4 +46,3 @@ def show_tree(path: str, subpath: str = "/"):
         with h5py.File(path, "r", swmr=SWMR_DEFAULT, libver="latest") as file:
             file.visititems(visit_node)
         return NumpySafeJSONResponse(tr)
-
