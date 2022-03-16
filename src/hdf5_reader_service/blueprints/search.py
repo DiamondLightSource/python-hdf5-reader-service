@@ -20,16 +20,13 @@ def get_nodes(path: str, subpath: str = "/"):
 
         path = "/" + path
 
-        try:
-            with h5py.File(path, "r", swmr=SWMR_DEFAULT, libver="latest") as file:
-                if subpath:
-                    nodes = NumpySafeJSONResponse(search(file[subpath]))
-                else:
-                    nodes = NumpySafeJSONResponse(search(file["/"]))
-                return nodes
+        with h5py.File(path, "r", swmr=SWMR_DEFAULT, libver="latest") as file:
+            if subpath:
+                nodes = NumpySafeJSONResponse(search(file[subpath]))
+            else:
+                nodes = NumpySafeJSONResponse(search(file["/"]))
+            return nodes
 
-        except:
-            print(f"File {file} can not be opened yet.")
 
 
 def search(node):

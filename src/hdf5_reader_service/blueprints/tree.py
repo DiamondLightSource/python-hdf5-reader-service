@@ -41,9 +41,7 @@ def show_tree(path: str, subpath: str = "/"):
                     "metadata": metadata(node),
                 }
 
-        try:
-            with h5py.File(path, "r", swmr=SWMR_DEFAULT, libver="latest") as file:
-                file.visititems(visit_node)
-            return NumpySafeJSONResponse(tr)
-        except Exception as e:
-            return e
+        with h5py.File(path, "r", swmr=SWMR_DEFAULT, libver="latest") as file:
+            file.visititems(visit_node)
+        return NumpySafeJSONResponse(tr)
+
