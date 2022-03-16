@@ -1,9 +1,20 @@
-from setuptools import setup, find_packages
+# type: ignore
+import glob
+import importlib.util
+
+from setuptools import setup
+
+# Import <package>._version_git.py without importing <package>
+path = glob.glob(__file__.replace("setup.py", "src/*/_version_git.py"))[0]
+spec = importlib.util.spec_from_file_location("_version_git", path)
+vg = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(vg)
+
+setup(cmdclass=vg.get_cmdclass(), version=vg.__version__)
 
 setup(
-    name='example',
-    version='0.1.0',
-    packages=find_packages(include=['hdf5_reader_service.*']),
+    name="example",
+    version="0.1.0",
     install_requires=[
         "anyio==3.5.0",
         "asgiref==3.4.1",
@@ -48,6 +59,6 @@ setup(
         "urllib3==1.26.8",
         "uvicorn==0.16.0",
         "Werkzeug==2.0.3",
-        "zipp==3.6.0"
-    ]
+        "zipp==3.6.0",
+    ],
 )

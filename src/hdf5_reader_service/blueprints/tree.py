@@ -13,7 +13,7 @@ SWMR_DEFAULT = bool(int(os.getenv("HDF5_SWMR_DEFAULT", "1")))
 router = APIRouter()
 
 # Setup blueprint route
-@router.get('/tree/{path:path}')
+@router.get("/tree/{path:path}")
 def show_tree(path: str, subpath: str = "/"):
     """Function that tells flask to render the tree of the HDF5 file.
 
@@ -26,9 +26,11 @@ def show_tree(path: str, subpath: str = "/"):
 
         path = "/" + path
 
-        tr = defaultdict(dict)
+        tr: Dict[str, Any] = defaultdict(dict)
 
-        def visit_node(addr: Union[str, List[str]], node: h5py.HLObject, tree: Dict[str, Any] = tr) -> None:
+        def visit_node(
+            addr: Union[str, List[str]], node: h5py.HLObject, tree: Dict[str, Any] = tr
+        ) -> None:
             if isinstance(addr, str):
                 return visit_node(addr.split("/"), node)
             elif len(addr) > 1:
@@ -36,7 +38,7 @@ def show_tree(path: str, subpath: str = "/"):
             else:
                 tree[addr[0]] = {
                     "subnodes": defaultdict(dict),
-                    "metadata": metadata(node)
+                    "metadata": metadata(node),
                 }
 
         try:
