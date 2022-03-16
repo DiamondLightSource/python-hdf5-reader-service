@@ -1,6 +1,6 @@
 from urllib import response
 from fastapi.testclient import TestClient
-from webapp.main import app
+from hdf5_reader_service.main import app
 
 client = TestClient(app)
 

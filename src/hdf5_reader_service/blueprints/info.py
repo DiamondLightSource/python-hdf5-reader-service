@@ -9,9 +9,9 @@ router = APIRouter()
 SWMR_DEFAULT = bool(int(os.getenv("HDF5_SWMR_DEFAULT", "1")))
 
 # Setup blueprint route
-@router.get("/metadata/{path:path}")
-def get_meta(path: str, subpath: str = "/"):
-    """Function that tells flask to output the metadata of the HDF5 file node.
+@router.get("/info/{path:path}")
+def get_info(path: str, subpath: str = "/"):
+    """Function that tells flask to output the info of the HDF5 file node.
 
     Returns:
         template: A rendered Jinja2 HTML template
