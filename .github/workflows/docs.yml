@@ -26,6 +26,7 @@ jobs:
       - name: Build docs
         uses: dls-controls/pipenv-run-action@v1
         with:
+          python-version: "3.9"
           pipenv-run: docs
 
       - name: Move to versioned directory

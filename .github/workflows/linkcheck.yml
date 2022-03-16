@@ -13,4 +13,5 @@ jobs:
       - name: Build docs
         uses: dls-controls/pipenv-run-action@v1
         with:
+          python-version: "3.9"
           pipenv-run: docs -b linkcheck
