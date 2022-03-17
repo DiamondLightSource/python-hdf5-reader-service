@@ -1,9 +1,8 @@
-import threading
 import sys
 from typing import Any
+
 from starlette.responses import JSONResponse
 
-LOCK = threading.Lock()
 
 def safe_json_dump(content):
     """
@@ -16,9 +15,10 @@ def safe_json_dump(content):
         numpy = sys.modules.get("numpy", None)
         if numpy is not None:
             if isinstance(content, numpy.ndarray):
-                # If we make it here, OPT_NUMPY_SERIALIZE failed because we have hit some edge case.
-                # Give up on the numpy fast-path and convert to Python list.
-                # If the items in this list aren't serializable (e.g. bytes) we'll recurse on each item.
+                # If we make it here, OPT_NUMPY_SERIALIZE failed because we have
+                # hit some edge case. Give up on the numpy fast-path and convert
+                # to Python list. If the items in this list aren't serializable
+                # (e.g. bytes) we'll recurse on each item.
                 return content.tolist()
             elif isinstance(content, (bytes, numpy.bytes_)):
                 return content.decode("utf-8")

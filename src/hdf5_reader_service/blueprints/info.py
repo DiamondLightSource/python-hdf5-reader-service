@@ -1,10 +1,11 @@
+import multiprocessing as mp
 import os
 from typing import Any, Mapping
 
 import h5py
 from fastapi import APIRouter
 
-from ..utils import LOCK, NumpySafeJSONResponse
+from hdf5_reader_service.utils import NumpySafeJSONResponse
 
 router = APIRouter()
 
@@ -19,15 +20,20 @@ def get_info(path: str, subpath: str = "/"):
     Returns:
         template: A rendered Jinja2 HTML template
     """
-    with LOCK:
-        path = "/" + path
+    p = mp.Process(target=fetch_info, args=(path, subpath))
+    p.start()
+    p.join()
 
-        with h5py.File(path, "r", swmr=SWMR_DEFAULT, libver="latest") as file:
-            if subpath:
-                meta = NumpySafeJSONResponse(metadata(file[subpath]))
-            else:
-                meta = NumpySafeJSONResponse(metadata(file["/"]))
-            return meta
+
+def fetch_info(path, subpath):
+    path = "/" + path
+
+    with h5py.File(path, "r", swmr=SWMR_DEFAULT, libver="latest") as file:
+        if subpath:
+            meta = NumpySafeJSONResponse(metadata(file[subpath]))
+        else:
+            meta = NumpySafeJSONResponse(metadata(file["/"]))
+        return meta
 
 
 def metadata(node: h5py.HLObject) -> Mapping[str, Any]:
