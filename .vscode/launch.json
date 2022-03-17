@@ -21,5 +21,20 @@
                 "PYTEST_ADDOPTS": "--no-cov"
             },
         }
+    ],
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: FastAPI",
+            "type": "python",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "hdf5_reader_service.main:app",
+                "--reload",
+                "--port", //these arg are optional
+                "8000"
+            ]
+        }
     ]
 }
