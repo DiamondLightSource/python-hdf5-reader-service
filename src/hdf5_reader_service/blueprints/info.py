@@ -41,12 +41,14 @@ def fetch_info(path: str, subpath: str, queue: mp.Queue) -> None:
 
 
 def metadata(node: h5py.HLObject) -> Mapping[str, Any]:
+
+    name = node.name
     metadata = dict(node.attrs)
 
-    data = {"data": {"attributes": {"metadata": metadata}}}
+    data = {"name": name, "data": {"attributes": {"metadata": metadata}}}
 
     if isinstance(node, h5py.Dataset):
-        shape = node.maxshape
+        shape = node.shape
         chunks = node.chunks
         itemsize = node.dtype.itemsize
         kind = node.dtype.kind
