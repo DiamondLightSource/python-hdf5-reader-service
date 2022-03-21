@@ -16,19 +16,21 @@ router = APIRouter()
 
 
 # Setup blueprint route
-@router.get("/tree/{path:path}")
+@router.get("/tree/")
 def show_tree(path: str, subpath: str = "/"):
     """Function that tells flask to render the tree of the HDF5 file.
 
     Returns:
         template: A rendered Jinja2 HTML template
     """
-    p = mp.Process(target=fetch_nodes, args=(path, subpath))
+    queue: mp.Queue = mp.Queue()
+    p = mp.Process(target=fetch_nodes, args=(path, subpath, queue))
     p.start()
     p.join()
+    return NumpySafeJSONResponse(queue.get())
 
 
-def fetch_nodes(path, subpath):
+def fetch_nodes(path, subpath, queue):
     time.sleep(10)
 
     path = "/" + path
@@ -50,4 +52,5 @@ def fetch_nodes(path, subpath):
 
     with h5py.File(path, "r", swmr=SWMR_DEFAULT, libver="latest") as file:
         file.visititems(visit_node)
-    return NumpySafeJSONResponse(tr)
+
+    queue.put(tr)

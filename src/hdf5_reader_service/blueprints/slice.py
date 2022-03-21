@@ -13,7 +13,7 @@ SWMR_DEFAULT = bool(int(os.getenv("HDF5_SWMR_DEFAULT", "1")))
 
 
 # Setup blueprint route
-@router.get("/slice/{path:path}")
+@router.get("/slice/")
 def get_slice(path: str, subpath: str = "/", slice_info: Optional[str] = None):
     """Function that tells flask to output the metadata of the HDF5 file node.
        The slice_info parameter should take the form
@@ -22,12 +22,14 @@ def get_slice(path: str, subpath: str = "/", slice_info: Optional[str] = None):
     Returns:
         template: A rendered Jinja2 HTML template
     """
-    p = mp.Process(target=fetch_slice, args=(path, subpath, slice_info))
+    queue: mp.Queue = mp.Queue()
+    p = mp.Process(target=fetch_slice, args=(path, subpath, queue, slice_info))
     p.start()
     p.join()
+    return NumpySafeJSONResponse(queue.get())
 
 
-def fetch_slice(path, subpath, slice_info):
+def fetch_slice(path, subpath, slice_info, queue):
     path = "/" + path
 
     if slice_info is not None:
@@ -45,7 +47,7 @@ def fetch_slice(path, subpath, slice_info):
         if subpath in f:
             dataset = f[subpath]
             if isinstance(dataset, h5py.Dataset):
-                return NumpySafeJSONResponse(dataset[slices])
+                queue.put(dataset[slices])
             else:
                 raise Exception(
                     f"Expected {subpath} to be a dataset, \

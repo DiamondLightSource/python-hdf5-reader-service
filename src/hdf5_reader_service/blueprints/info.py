@@ -13,27 +13,29 @@ SWMR_DEFAULT = bool(int(os.getenv("HDF5_SWMR_DEFAULT", "1")))
 
 
 # Setup blueprint route
-@router.get("/info/{path:path}")
+@router.get("/info/")
 def get_info(path: str, subpath: str = "/"):
     """Function that tells flask to output the info of the HDF5 file node.
 
     Returns:
         template: A rendered Jinja2 HTML template
     """
-    p = mp.Process(target=fetch_info, args=(path, subpath))
+    queue: mp.Queue = mp.Queue()
+    p = mp.Process(target=fetch_info, args=(path, subpath, queue))
     p.start()
     p.join()
+    return NumpySafeJSONResponse(queue.get())
 
 
-def fetch_info(path, subpath):
+def fetch_info(path, subpath, queue):
     path = "/" + path
 
     with h5py.File(path, "r", swmr=SWMR_DEFAULT, libver="latest") as file:
         if subpath:
-            meta = NumpySafeJSONResponse(metadata(file[subpath]))
+            meta = metadata(file[subpath])
         else:
-            meta = NumpySafeJSONResponse(metadata(file["/"]))
-        return meta
+            meta = metadata(file["/"])
+        queue.put(meta)
 
 
 def metadata(node: h5py.HLObject) -> Mapping[str, Any]:
