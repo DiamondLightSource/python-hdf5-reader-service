@@ -4,6 +4,7 @@ from typing import Optional
 
 import h5py
 from fastapi import APIRouter
+from starlette.responses import JSONResponse
 
 from hdf5_reader_service.utils import NumpySafeJSONResponse
 
@@ -14,7 +15,9 @@ SWMR_DEFAULT = bool(int(os.getenv("HDF5_SWMR_DEFAULT", "1")))
 
 # Setup blueprint route
 @router.get("/slice/")
-def get_slice(path: str, subpath: str = "/", slice_info: Optional[str] = None):
+def get_slice(
+    path: str, subpath: str = "/", slice_info: Optional[str] = None
+) -> JSONResponse:
     """Function that tells flask to output the metadata of the HDF5 file node.
        The slice_info parameter should take the form
        start:stop:steps,start:stop:steps,...
@@ -29,7 +32,9 @@ def get_slice(path: str, subpath: str = "/", slice_info: Optional[str] = None):
     return NumpySafeJSONResponse(queue.get())
 
 
-def fetch_slice(path, subpath, slice_info, queue):
+def fetch_slice(
+    path: str, subpath: str, slice_info: Optional[str], queue: mp.Queue
+) -> None:
     path = "/" + path
 
     if slice_info is not None:

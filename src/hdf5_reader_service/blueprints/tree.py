@@ -6,6 +6,7 @@ from typing import Any, Dict, List, Union
 
 import h5py
 from fastapi import APIRouter
+from starlette.responses import JSONResponse
 
 from hdf5_reader_service.blueprints.info import metadata
 from hdf5_reader_service.utils import NumpySafeJSONResponse
@@ -17,7 +18,7 @@ router = APIRouter()
 
 # Setup blueprint route
 @router.get("/tree/")
-def show_tree(path: str, subpath: str = "/"):
+def show_tree(path: str, subpath: str = "/") -> JSONResponse:
     """Function that tells flask to render the tree of the HDF5 file.
 
     Returns:
@@ -30,7 +31,7 @@ def show_tree(path: str, subpath: str = "/"):
     return NumpySafeJSONResponse(queue.get())
 
 
-def fetch_nodes(path, subpath, queue):
+def fetch_nodes(path: str, subpath: str, queue: mp.Queue) -> None:
     time.sleep(10)
 
     path = "/" + path

@@ -4,6 +4,7 @@ from typing import Any, Mapping
 
 import h5py
 from fastapi import APIRouter
+from starlette.responses import JSONResponse
 
 from hdf5_reader_service.utils import NumpySafeJSONResponse
 
@@ -14,7 +15,7 @@ SWMR_DEFAULT = bool(int(os.getenv("HDF5_SWMR_DEFAULT", "1")))
 
 # Setup blueprint route
 @router.get("/info/")
-def get_info(path: str, subpath: str = "/"):
+def get_info(path: str, subpath: str = "/") -> JSONResponse:
     """Function that tells flask to output the info of the HDF5 file node.
 
     Returns:
@@ -27,7 +28,8 @@ def get_info(path: str, subpath: str = "/"):
     return NumpySafeJSONResponse(queue.get())
 
 
-def fetch_info(path, subpath, queue):
+def fetch_info(path: str, subpath: str, queue: mp.Queue) -> None:
+
     path = "/" + path
 
     with h5py.File(path, "r", swmr=SWMR_DEFAULT, libver="latest") as file:
