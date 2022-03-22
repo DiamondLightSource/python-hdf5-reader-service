@@ -1,6 +1,8 @@
 import sys
-from typing import Any
+from collections import defaultdict
+from typing import Any, Callable, Dict, Iterable, Mapping, Optional, Union
 
+import h5py as h5
 from starlette.responses import JSONResponse
 
 
@@ -35,3 +37,38 @@ class NumpySafeJSONResponse(JSONResponse):
 
     def render(self, content: Any) -> bytes:
         return safe_json_dump(content)
+
+
+_VisitCallback = Callable[[str, h5.HLObject], Mapping[str, Any]]
+
+
+def h5_tree_map(
+    callback: _VisitCallback, root: h5.HLObject, map_name: str = "contents"
+):
+    name = root.name.split("/")[-1]
+    block = {name: {"contents": callback(name, root)}}
+
+    if hasattr(root, "values"):
+        subtree = {}
+        for v in root.values():
+            subtree = {**subtree, **h5_tree_map(callback, v)}
+        block[name]["children"] = subtree
+
+    return block
+
+
+# def fetch_nodes(path: str, subpath: str, queue: mp.Queue) -> None:
+#     path = "/" + path
+
+#     tr = {}
+
+#     def visit_node(addr: str, node: h5.HLObject) -> None:
+#         if isinstance(addr, str):
+#             return visit_node(addr.split("/"), node)
+#         elif len(addr) > 1:
+#             return visit_node(addr[1:], node, tree[addr[0]]["subnodes"])
+#         else:
+#             tree[addr[0]] = {
+#                 "subnodes": defaultdict(dict),
+#                 "metadata": metadata(node),
+#             }

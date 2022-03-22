@@ -5,6 +5,8 @@ It can be deleted when all the contained tests pass
 import configparser
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).parent.parent
 
 
@@ -30,6 +32,9 @@ def assert_not_exists(path: str, explanation: str):
 
 
 # setup.cfg
+
+
+@pytest.mark.skip("development needed")
 def test_module_description():
     conf = configparser.ConfigParser()
     conf.read("setup.cfg")
@@ -42,6 +47,9 @@ def test_module_description():
 
 
 # README
+
+
+@pytest.mark.skip("development needed")
 def test_changed_README_intro():
     assert_not_contains_text(
         "README.rst",
@@ -50,6 +58,7 @@ def test_changed_README_intro():
     )
 
 
+@pytest.mark.skip("development needed")
 def test_changed_README_body():
     assert_not_contains_text(
         "README.rst",
@@ -59,6 +68,9 @@ def test_changed_README_body():
 
 
 # Docs
+
+
+@pytest.mark.skip("development needed")
 def test_docs_ref_api_changed():
     assert_not_contains_text(
         "docs/reference/api.rst",
@@ -67,12 +79,14 @@ def test_docs_ref_api_changed():
     )
 
 
+@pytest.mark.skip("development needed")
 def test_how_tos_written():
     assert_not_exists(
         "docs/how-to/accomplish-a-task.rst", "and write some docs/how-tos"
     )
 
 
+@pytest.mark.skip("development needed")
 def test_explanations_written():
     assert_not_exists(
         "docs/explanations/why-is-something-so.rst", "and write some docs/explanations"
