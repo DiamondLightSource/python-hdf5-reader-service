@@ -2,7 +2,7 @@ import os
 
 from fastapi import FastAPI  # , Response, status
 
-from .blueprints import info, search, slice, tree
+from .blueprints import info, search, shapes, slice, tree
 
 # Setup the app
 app = FastAPI(root_path=os.path.abspath(os.path.dirname(__file__)))
@@ -11,6 +11,7 @@ app.include_router(tree.router)
 app.include_router(info.router)
 app.include_router(search.router)
 app.include_router(slice.router)
+app.include_router(shapes.router)
 
 
 @app.get("/")
