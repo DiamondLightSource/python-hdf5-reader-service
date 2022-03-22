@@ -32,11 +32,14 @@ def fetch_nodes(path: str, subpath: str, queue: mp.Queue) -> None:
     path = "/" + path
 
     with h5py.File(path, "r", swmr=SWMR_DEFAULT, libver="latest") as file:
-        if subpath:
-            nodes = search(file[subpath])
+
+        node = file[subpath]
+
+        if not isinstance(node, h5py.Group):
+            queue.put({"INFO": "Please provide a path to a dataset"})
         else:
-            nodes = search(file["/"])
-        queue.put(nodes)
+            nodes = search(node)
+            queue.put(nodes)
 
 
 def search(node: h5py.Group) -> Mapping[str, Any]:
