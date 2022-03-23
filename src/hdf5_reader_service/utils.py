@@ -49,26 +49,10 @@ def h5_tree_map(
     block = {name: {"contents": callback(name, root)}}
 
     if hasattr(root, "values"):
-        subtree = {}
+        subtree: Dict[str, Any] = {}
         for v in root.values():
-            subtree = {**subtree, **h5_tree_map(callback, v)}
+            if v is not None:
+                subtree = {**subtree, **h5_tree_map(callback, v)}
         block[name]["children"] = subtree
 
     return block
-
-
-# def fetch_nodes(path: str, subpath: str, queue: mp.Queue) -> None:
-#     path = "/" + path
-
-#     tr = {}
-
-#     def visit_node(addr: str, node: h5.HLObject) -> None:
-#         if isinstance(addr, str):
-#             return visit_node(addr.split("/"), node)
-#         elif len(addr) > 1:
-#             return visit_node(addr[1:], node, tree[addr[0]]["subnodes"])
-#         else:
-#             tree[addr[0]] = {
-#                 "subnodes": defaultdict(dict),
-#                 "metadata": metadata(node),
-#             }
