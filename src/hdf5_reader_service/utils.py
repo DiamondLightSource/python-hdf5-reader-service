@@ -55,7 +55,10 @@ def h5_tree_map(
         subtree: Dict[str, Any] = {}
         for k, v in root.items():
             if v is not None:
-                subtree = {**subtree, **h5_tree_map(callback, v)}
+                subtree = {
+                    **subtree,
+                    **h5_tree_map(callback, v, map_name, subtree_name),
+                }
             else:
                 subtree = {**subtree, **{k: {"status": "MISSING_LINK"}}}
         block[name][subtree_name] = subtree
