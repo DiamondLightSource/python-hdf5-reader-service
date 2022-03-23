@@ -31,9 +31,9 @@ def get_nodes(path: str, subpath: str = "/") -> JSONResponse:
 def fetch_nodes(path: str, subpath: str, queue: mp.Queue) -> None:
     path = "/" + path
 
-    with h5py.File(path, "r", swmr=SWMR_DEFAULT, libver="latest") as file:
+    with h5py.File(path, "r", swmr=SWMR_DEFAULT, libver="latest") as f:
 
-        node = file[subpath]
+        node = f[subpath]
 
         if not isinstance(node, h5py.Group):
             queue.put({"INFO": "Please provide a path to a dataset"})
