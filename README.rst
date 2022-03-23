@@ -15,7 +15,7 @@ Releases       https://github.com/DiamondLightSource/python-hdf5-reader-service/
 
 To run a basic server::
 
-    uvicorn hdf5_reader_service.main:app
+    hdf5-reader-service --host <host> --port <port>
 
 .. |code_ci| image:: https://github.com/DiamondLightSource/python-hdf5-reader-service/workflows/Code%20CI/badge.svg?branch=master
     :target: https://github.com/DiamondLightSource/python-hdf5-reader-service/actions?query=workflow%3A%22Code+CI%22
