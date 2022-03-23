@@ -32,8 +32,6 @@ def show_tree(path: str, subpath: str = "/") -> JSONResponse:
 
 
 def fetch_nodes(path: str, subpath: str, queue: mp.Queue) -> None:
-    time.sleep(10)
-
     path = "/" + path
 
     tr: Dict[str, Any] = defaultdict(dict)
