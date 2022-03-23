@@ -51,7 +51,7 @@ def fetch_nodes(path: str, subpath: str, queue: mp.Queue) -> None:
                 "metadata": metadata(node),
             }
 
-    with h5py.File(path, "r", swmr=SWMR_DEFAULT, libver="latest") as file:
-        file.visititems(visit_node)
+    with h5py.File(path, "r", swmr=SWMR_DEFAULT, libver="latest") as f:
+        f.visititems(visit_node)
 
     queue.put(tr)

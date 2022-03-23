@@ -32,11 +32,11 @@ def fetch_info(path: str, subpath: str, queue: mp.Queue) -> None:
 
     path = "/" + path
 
-    with h5py.File(path, "r", swmr=SWMR_DEFAULT, libver="latest") as file:
+    with h5py.File(path, "r", swmr=SWMR_DEFAULT, libver="latest") as f:
         if subpath:
-            meta = metadata(file[subpath])
+            meta = metadata(f[subpath])
         else:
-            meta = metadata(file["/"])
+            meta = metadata(f["/"])
         queue.put(meta)
 
 

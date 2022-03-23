@@ -31,11 +31,11 @@ def get_nodes(path: str, subpath: str = "/") -> JSONResponse:
 def fetch_nodes(path: str, subpath: str, queue: mp.Queue) -> None:
     path = "/" + path
 
-    with h5py.File(path, "r", swmr=SWMR_DEFAULT, libver="latest") as file:
+    with h5py.File(path, "r", swmr=SWMR_DEFAULT, libver="latest") as f:
         if subpath:
-            nodes = search(file[subpath])
+            nodes = search(f[subpath])
         else:
-            nodes = search(file["/"])
+            nodes = search(f["/"])
         queue.put(nodes)
 
 
