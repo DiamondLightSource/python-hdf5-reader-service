@@ -2,7 +2,7 @@ import multiprocessing as mp
 import os
 import time
 from collections import defaultdict
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Mapping, Union
 
 import h5py
 from fastapi import APIRouter
@@ -32,26 +32,12 @@ def show_tree(path: str, subpath: str = "/") -> JSONResponse:
 
 
 def fetch_nodes(path: str, subpath: str, queue: mp.Queue) -> None:
-    time.sleep(10)
-
     path = "/" + path
 
-    # tr: Dict[str, Any] = defaultdict(dict)
-
-    # def visit_node(
-    #     addr: Union[str, List[str]], node: h5py.HLObject, tree: Dict[str, Any] = tr
-    # ) -> None:
-    #     if isinstance(addr, str):
-    #         return visit_node(addr.split("/"), node)
-    #     elif len(addr) > 1:
-    #         return visit_node(addr[1:], node, tree[addr[0]]["subnodes"])
-    #     else:
-    #         tree[addr[0]] = {
-    #             "subnodes": defaultdict(dict),
-    #             "metadata": metadata(node),
-    #         }
+    def get_metadata(name: str, obj: h5py.HLObject) -> Mapping[str, Any]:
+        return metadata(obj)
 
     with h5py.File(path, "r", swmr=SWMR_DEFAULT, libver="latest") as f:
-        tree = h5_tree_map(lambda _, obj: metadata(obj), f)
+        tree = h5_tree_map(get_metadata, f, map_name="metadata")
 
     queue.put(tree)
