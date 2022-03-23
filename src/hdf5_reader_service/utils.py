@@ -1,6 +1,5 @@
 import sys
-from collections import defaultdict
-from typing import Any, Callable, Dict, Iterable, Mapping, Optional, Union
+from typing import Any, Callable, Dict, List, Mapping, Union
 
 import h5py as h5
 from starlette.responses import JSONResponse
@@ -39,7 +38,11 @@ class NumpySafeJSONResponse(JSONResponse):
         return safe_json_dump(content)
 
 
-_VisitCallback = Callable[[str, h5.HLObject], Mapping[str, Any]]
+#: Something that can be passed to json.dump
+_Jsonable = Union[Mapping[str, Any], List[Any], bool, int, float, str]
+
+#: A callback to pass to a tree map, do "this" to every node and leaf
+_VisitCallback = Callable[[str, h5.HLObject], _Jsonable]
 
 
 def h5_tree_map(
@@ -47,7 +50,7 @@ def h5_tree_map(
     root: h5.HLObject,
     map_name: str = "contents",
     subtree_name: str = "subnodes",
-):
+) -> Mapping[str, Any]:
     name = root.name.split("/")[-1]
     block = {name: {map_name: callback(name, root)}}
 

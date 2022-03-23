@@ -1,7 +1,6 @@
 import multiprocessing as mp
 import os
-from collections import defaultdict
-from typing import Any, Dict, List, Mapping, Optional, Union
+from typing import Any, Mapping
 
 import h5py
 from fastapi import APIRouter
