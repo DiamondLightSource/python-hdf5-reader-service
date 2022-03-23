@@ -14,21 +14,25 @@ NO_RECURSION = "/entry/sample/name", {"name": {"contents": "META"}}
 
 ONE_LEVEL_RECURSION = "/entry/sample", {
     "sample": {
-        "children": {
-            "description": {"contents": "META"},
-            "name": {"contents": "META"},
-        },
         "contents": "META",
+        "subnodes": {"description": {"contents": "META"}, "name": {"contents": "META"}},
     }
 }
 
 
 TWO_LEVEL_RECURSION = "/entry/diamond_scan", {
     "diamond_scan": {
-        "children": {
+        "contents": "META",
+        "subnodes": {
             "duration": {"contents": "META"},
             "end_time": {"contents": "META"},
-            "keys": {"children": {"uid": {"contents": "META"}}, "contents": "META"},
+            "keys": {
+                "contents": "META",
+                "subnodes": {
+                    "izero": {"status": "MISSING_LINK"},
+                    "uid": {"contents": "META"},
+                },
+            },
             "scan_dead_time": {"contents": "META"},
             "scan_dead_time_percent": {"contents": "META"},
             "scan_estimated_duration": {"contents": "META"},
@@ -39,12 +43,18 @@ TWO_LEVEL_RECURSION = "/entry/diamond_scan", {
             "scan_shape": {"contents": "META"},
             "start_time": {"contents": "META"},
         },
-        "contents": "META",
     }
 }
 
 LINKED_DATA = "/entry/DIFFRACTION", {
-    "DIFFRACTION": {"children": {"data": {"contents": "META"}}, "contents": "META"}
+    "DIFFRACTION": {
+        "contents": "META",
+        "subnodes": {
+            "data": {"contents": "META"},
+            "simx": {"status": "MISSING_LINK"},
+            "simy": {"status": "MISSING_LINK"},
+        },
+    }
 }
 
 
@@ -56,4 +66,7 @@ def test_h5_visit_map(path: str, expected_tree: Mapping[str, Any]) -> None:
     with h5.File(_TEST_FILE) as f:
         tree = h5_tree_map(lambda name, obj: "META", f[path])
 
+    from pprint import pprint
+
+    pprint(tree)
     assert expected_tree == tree

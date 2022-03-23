@@ -43,16 +43,21 @@ _VisitCallback = Callable[[str, h5.HLObject], Mapping[str, Any]]
 
 
 def h5_tree_map(
-    callback: _VisitCallback, root: h5.HLObject, map_name: str = "contents"
+    callback: _VisitCallback,
+    root: h5.HLObject,
+    map_name: str = "contents",
+    subtree_name: str = "subnodes",
 ):
     name = root.name.split("/")[-1]
-    block = {name: {"contents": callback(name, root)}}
+    block = {name: {map_name: callback(name, root)}}
 
-    if hasattr(root, "values"):
+    if hasattr(root, "items"):
         subtree: Dict[str, Any] = {}
-        for v in root.values():
+        for k, v in root.items():
             if v is not None:
                 subtree = {**subtree, **h5_tree_map(callback, v)}
-        block[name]["children"] = subtree
+            else:
+                subtree = {**subtree, **{k: {"status": "MISSING_LINK"}}}
+        block[name][subtree_name] = subtree
 
     return block
