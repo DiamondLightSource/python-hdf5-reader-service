@@ -15,7 +15,7 @@ def test_read_main():
     }
 
 
-_PATH = os.path.abspath("tests/test-data.nxs")
+_PATH = os.path.abspath("tests/test-data/p45-104.nxs")
 
 
 def test_read_tree():

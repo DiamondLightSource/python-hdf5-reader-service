@@ -9,7 +9,7 @@
             "type": "python",
             "request": "launch",
             "justMyCode": false,
-            "program": "${file}",
+            "module": "pytest",
             "purpose": [
                 "debug-test"
             ],
@@ -20,10 +20,7 @@
                 // https://github.com/microsoft/vscode-python/issues/693
                 "PYTEST_ADDOPTS": "--no-cov"
             },
-        }
-    ],
-    "version": "0.2.0",
-    "configurations": [
+        },
         {
             "name": "Python: FastAPI",
             "type": "python",
