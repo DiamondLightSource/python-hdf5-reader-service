@@ -14,4 +14,4 @@ run the following command in a terminal:
 However, it is also possible to run the server on a specific host or port. To
 do this, just use the ``--host`` and ``--port`` flags.
 
-    $ uvicorn hdf5_reader_service.main:app --host 127.0.0.1 --port 8000
+    $ hdf5-reader-service --host 127.0.0.1 --port 8000
