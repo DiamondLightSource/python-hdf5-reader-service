@@ -19,11 +19,8 @@ def get_slice(
     path: str, subpath: str = "/", slice_info: Optional[str] = None
 ) -> JSONResponse:
     """Function that tells flask to output the metadata of the HDF5 file node.
-       The slice_info parameter should take the form
-       start:stop:steps,start:stop:steps,...
-
-    Returns:
-        template: A rendered Jinja2 HTML template
+    The slice_info parameter should take the form
+    start:stop:steps,start:stop:steps,...
     """
     queue: mp.Queue = mp.Queue()
     p = mp.Process(target=fetch_slice, args=(path, subpath, queue, slice_info))
