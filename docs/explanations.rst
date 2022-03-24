@@ -10,3 +10,4 @@ Explanation of how the library works and why it works that way.
 
     explanations/why-is-something-so
     explanations/why-multiprocessing
+    explanations/why-make-hdf5-reader-service
