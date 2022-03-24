@@ -13,7 +13,7 @@ The ``/tree`` endpoint returns a JSON representation of the HDF5 file tree struc
 Info
 ----
 
-The `/info` endpoint returns metadata about the given node in the HDF5 file.
+The ``/info`` endpoint returns metadata about the given node in the HDF5 file.
 
     http://0.0.0.0/8000/info/?path=<path>&subpath=<subpath>
 
