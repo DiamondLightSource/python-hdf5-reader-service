@@ -6,7 +6,7 @@ The HDF5 Reader Service provides REST endpoints for querying HDF5 files.
 Tree
 ----
 
-The `/tree` endpoint returns a JSON representation of the HDF5 file tree structure.
+The ``/tree`` endpoint returns a JSON representation of the HDF5 file tree structure.
 
     http://0.0.0.0/8000/tree/?path=<path>
 
