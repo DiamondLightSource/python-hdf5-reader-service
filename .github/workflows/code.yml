@@ -24,7 +24,6 @@ jobs:
         with:
           pipenv-run: lint
           python-version: ${{ matrix.python }}
-          pipenv-install: --dev --${{ matrix.pipenv }}
 
   wheel:
     runs-on: "ubuntu-latest"
