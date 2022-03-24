@@ -21,4 +21,4 @@ WORKDIR ${ENV_DIR}
 
 ENV PYTHON_SITE_PACKAGES /usr/local/lib/python3.9/site-packages
 
-CMD ["uvicorn", "hdf5_reader_service.main:app", "--host", "0.0.0.0"]
+CMD ["hdf5-reader-service"]
