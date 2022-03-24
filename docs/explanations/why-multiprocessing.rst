@@ -8,7 +8,7 @@ super difficult to do any CPU heavy workloads.
 One workaround for this would be to deploy the webapp on a cluster, such as
 Kubernetes, and have some load balancing code to spin up new instances whenever
 a call is made. 
-The easier solution, however, is to implement the Multiprocessing library. This
+The easier solution, however, is to use the Multiprocessing library. This
 allows for a new process to be spawned for a specific function call, hence 
 avoiding the GIL.
 
