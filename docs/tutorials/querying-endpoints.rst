@@ -20,7 +20,7 @@ The ``/info`` endpoint returns metadata about the given node in the HDF5 file.
 Shapes
 ------
 
-The `/shapes` endpoint fetches the shapes of the datasets.
+The ``/shapes`` endpoint fetches the shapes of the datasets.
 
     http://0.0.0.0/8000/shapes/?path=<path>
 
