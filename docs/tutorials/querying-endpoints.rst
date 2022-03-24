@@ -27,7 +27,7 @@ The `/shapes` endpoint fetches the shapes of the datasets.
 Search
 ------
 
-The `/search` endpoint fetches the subnode structure of the current subnode.
+The ``/search`` endpoint fetches the subnode structure of the current subnode.
 
     http://0.0.0.0/8000/search/?path=<path>&subpath=<subpath>
 
