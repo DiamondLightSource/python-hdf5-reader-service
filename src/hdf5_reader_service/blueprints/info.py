@@ -16,11 +16,7 @@ SWMR_DEFAULT = bool(int(os.getenv("HDF5_SWMR_DEFAULT", "1")))
 # Setup blueprint route
 @router.get("/info/")
 def get_info(path: str, subpath: str = "/") -> JSONResponse:
-    """Function that tells flask to output the info of the HDF5 file node.
-
-    Returns:
-        template: A rendered Jinja2 HTML template
-    """
+    """Function that tells flask to output the info of the HDF5 file node."""
     queue: mp.Queue = mp.Queue()
     p = mp.Process(target=fetch_info, args=(path, subpath, queue))
     p.start()

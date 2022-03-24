@@ -16,11 +16,7 @@ SWMR_DEFAULT = bool(int(os.getenv("HDF5_SWMR_DEFAULT", "1")))
 # Setup blueprint route
 @router.get("/search/")
 def get_nodes(path: str, subpath: str = "/") -> JSONResponse:
-    """Function that tells flask to output the subnodes of the HDF5 file node.
-
-    Returns:
-        template: A rendered Jinja2 HTML template
-    """
+    """Function that tells flask to output the subnodes of the HDF5 file node."""
     queue: mp.Queue = mp.Queue()
     p = mp.Process(target=fetch_nodes, args=(path, subpath, queue))
     p.start()

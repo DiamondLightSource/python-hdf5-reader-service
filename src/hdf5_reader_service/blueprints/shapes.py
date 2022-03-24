@@ -16,11 +16,7 @@ router = APIRouter()
 # Setup blueprint route
 @router.get("/shapes/")
 def show_shapes(path: str, subpath: str = "/") -> JSONResponse:
-    """Function that tells flask to get the shapes of the HDF5 datasets.
-
-    Returns:
-        template: A rendered Jinja2 HTML template
-    """
+    """Function that tells flask to get the shapes of the HDF5 datasets."""
     queue: mp.Queue = mp.Queue()
     p = mp.Process(target=fetch_shapes, args=(path, subpath, queue))
     p.start()

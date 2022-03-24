@@ -3,11 +3,6 @@ import os
 import click
 from fastapi import FastAPI  # , Response, status
 
-# @app.get("/busy")
-# def busy(response: Response):
-#     if LOCK.locked():
-#         response.status_code = status.HTTP_423_LOCKED
-#     return {"busy": LOCK.locked()}
 from ._version_git import __version__
 from .blueprints import info, search, shapes, slice, tree
 
@@ -24,6 +19,13 @@ app.include_router(shapes.router)
 @app.get("/")
 def index():
     return {"INFO": "Please provide a path to the HDF5 file, e.g. '/file/<path>'."}
+
+
+# @app.get("/busy")
+# def busy(response: Response):
+#     if LOCK.locked():
+#         response.status_code = status.HTTP_423_LOCKED
+#     return {"busy": LOCK.locked()}
 
 
 @click.group(invoke_without_command=True)
