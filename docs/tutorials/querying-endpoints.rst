@@ -34,7 +34,7 @@ The ``/search`` endpoint fetches the subnode structure of the current subnode.
 Slice
 -----
 
-The `/slice` endpoint fetches the requested slice of the given dataset.
+The ``/slice`` endpoint fetches the requested slice of the given dataset.
 
 http://0.0.0.0/8000/search/?path=<path>&subpath=<subpath>&slice=0:0:0,0:0:0
 
