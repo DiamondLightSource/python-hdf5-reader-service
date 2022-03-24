@@ -9,7 +9,7 @@ Start the server
 It is very easy to start the HDF5 reader service. All that is needed is to
 run the following command in a terminal:
 
-    $ uvicorn hdf5_reader_service.main:app
+    $ hdf5-reader-service --host <host> --port <port>
 
 However, it is also possible to run the server on a specific host or port. To
 do this, just use the ``--host`` and ``--port`` flags.
