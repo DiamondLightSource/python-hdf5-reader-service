@@ -23,7 +23,7 @@ jobs:
         uses: dls-controls/pipenv-run-action@v1
         with:
           pipenv-run: lint
-          python-version: ${{ matrix.python }}
+          python-version: 3.9
 
   wheel:
     runs-on: "ubuntu-latest"
