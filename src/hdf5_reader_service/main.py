@@ -4,16 +4,11 @@ import click
 from fastapi import FastAPI  # , Response, status
 
 from ._version_git import __version__
-from .blueprints import info, search, shapes, slice, tree
+from .api import router
 
 # Setup the app
 app = FastAPI(root_path=os.path.abspath(os.path.dirname(__file__)))
-
-app.include_router(tree.router)
-app.include_router(info.router)
-app.include_router(search.router)
-app.include_router(slice.router)
-app.include_router(shapes.router)
+app.include_router(router)
 
 
 @app.get("/")
