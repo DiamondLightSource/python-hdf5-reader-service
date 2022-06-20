@@ -18,6 +18,11 @@ def test_read_main():
 _PATH = os.path.abspath("tests/test-data/p45-104.nxs")
 
 
+def test_read_shapes() -> None:
+    response = client.get(f"/shapes/?path={_PATH}")
+    assert response.status_code == 200
+
+
 def test_read_tree():
     response = client.get(f"/tree/?path={_PATH}")
     assert response.status_code == 200
