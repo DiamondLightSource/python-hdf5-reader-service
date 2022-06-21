@@ -1,4 +1,3 @@
-import multiprocessing as mp
 from typing import Any, Mapping
 
 import h5py
@@ -12,7 +11,7 @@ from hdf5_reader_service.model import (
 )
 
 
-def fetch_metadata(path: str, subpath: str, swmr: bool, queue: mp.Queue) -> None:
+def fetch_metadata(path: str, subpath: str, swmr: bool) -> Mapping[str, Any]:
 
     path = "/" + path
 
@@ -21,7 +20,7 @@ def fetch_metadata(path: str, subpath: str, swmr: bool, queue: mp.Queue) -> None
             meta = metadata(f[subpath])
         else:
             meta = metadata(f["/"])
-        queue.put(meta)
+        return meta
 
 
 def metadata(node: h5py.HLObject) -> MetadataNode:
