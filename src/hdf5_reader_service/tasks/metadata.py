@@ -1,10 +1,9 @@
-import multiprocessing as mp
 from typing import Any, Mapping
 
 import h5py
 
 
-def fetch_metadata(path: str, subpath: str, swmr: bool, queue: mp.Queue) -> None:
+def fetch_metadata(path: str, subpath: str, swmr: bool) -> Mapping[str, Any]:
 
     path = "/" + path
 
@@ -13,7 +12,7 @@ def fetch_metadata(path: str, subpath: str, swmr: bool, queue: mp.Queue) -> None
             meta = metadata(f[subpath])
         else:
             meta = metadata(f["/"])
-        queue.put(meta)
+        return meta
 
 
 def metadata(node: h5py.HLObject) -> Mapping[str, Any]:
