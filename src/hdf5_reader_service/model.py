@@ -6,8 +6,8 @@ from pydantic.generics import GenericModel
 
 
 class DatasetMacroStructure(BaseModel):
-    chunks: Tuple[int, ...]
     shape: Tuple[int, ...]
+    chunks: Optional[Tuple[int, ...]] = None
 
 
 class ByteOrder(Enum):
