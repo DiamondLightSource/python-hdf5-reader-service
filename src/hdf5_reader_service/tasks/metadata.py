@@ -3,6 +3,14 @@ from typing import Any, Mapping
 
 import h5py
 
+from hdf5_reader_service.model import (
+    ByteOrder,
+    DatasetMacroStructure,
+    DatasetMicroStructure,
+    DatasetStructure,
+    MetadataNode,
+)
+
 
 def fetch_metadata(path: str, subpath: str, swmr: bool, queue: mp.Queue) -> None:
 
@@ -16,24 +24,25 @@ def fetch_metadata(path: str, subpath: str, swmr: bool, queue: mp.Queue) -> None
         queue.put(meta)
 
 
-def metadata(node: h5py.HLObject) -> Mapping[str, Any]:
-
+def metadata(node: h5py.HLObject) -> MetadataNode:
     name = node.name
-    metadata = dict(node.attrs)
+    attributes = dict(node.attrs)
 
-    data = {"name": name, "data": {"attributes": {"metadata": metadata}}}
+    data = MetadataNode(name=name, attributes=attributes)
 
     if isinstance(node, h5py.Dataset):
         shape = node.shape
         chunks = node.chunks
         itemsize = node.dtype.itemsize
         kind = node.dtype.kind
-        # endianness = dtype.endiannness if dtype.endiannness else "not_applicable"
+        byte_order = ByteOrder.from_numpy_byte_order(node.dtype.byteorder)
 
-        macro = {"chunks": chunks, "shape": shape}
-        micro = {"itemsize": itemsize, "kind": kind}
-        structure = {"macro": macro, "micro": micro}
-
-        data["data"]["attributes"]["structure"] = structure
+        structure = DatasetStructure(
+            macro=DatasetMacroStructure(chunks=chunks, shape=shape),
+            micro=DatasetMicroStructure(
+                itemsize=itemsize, kind=kind, byte_order=byte_order
+            ),
+        )
+        data.structure = structure
 
     return data

@@ -2,6 +2,7 @@ import sys
 from typing import Any, Callable, Dict, List, Mapping, Union
 
 import h5py as h5
+from pydantic import BaseModel
 from starlette.responses import JSONResponse
 
 
@@ -23,6 +24,9 @@ def safe_json_dump(content):
                 return content.tolist()
             elif isinstance(content, (bytes, numpy.bytes_)):
                 return content.decode("utf-8")
+            elif isinstance(content, BaseModel):
+                # Handle the pydantic model case
+                return content.dict()
         raise TypeError
 
     # Not all numpy dtypes are supported by orjson.
