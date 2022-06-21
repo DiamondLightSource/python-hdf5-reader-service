@@ -1,5 +1,6 @@
 import multiprocessing as mp
 import os
+from shutil import ExecError
 from typing import Optional
 
 from fastapi import APIRouter
@@ -21,6 +22,8 @@ def get_info(path: str, subpath: str = "/") -> JSONResponse:
     p = mp.Process(target=fetch_metadata, args=(path, subpath, SWMR_DEFAULT, queue))
     p.start()
     p.join()
+    if p.exitcode != 0:
+        raise ExecError(f"Failure, exit code: {p.exitcode}")
     return NumpySafeJSONResponse(queue.get())
 
 
@@ -31,6 +34,8 @@ def get_children(path: str, subpath: str = "/") -> JSONResponse:
     p = mp.Process(target=fetch_children, args=(path, subpath, SWMR_DEFAULT, queue))
     p.start()
     p.join()
+    if p.exitcode != 0:
+        raise ExecError(f"Failure, exit code: {p.exitcode}")
     return NumpySafeJSONResponse(queue.get())
 
 
@@ -41,6 +46,8 @@ def get_shapes(path: str, subpath: str = "/") -> JSONResponse:
     p = mp.Process(target=fetch_shapes, args=(path, subpath, SWMR_DEFAULT, queue))
     p.start()
     p.join()
+    if p.exitcode != 0:
+        raise ExecError(f"Failure, exit code: {p.exitcode}")
     return NumpySafeJSONResponse(queue.get())
 
 
@@ -58,6 +65,8 @@ def get_slice(
     )
     p.start()
     p.join()
+    if p.exitcode != 0:
+        raise ExecError(f"Failure, exit code: {p.exitcode}")
     return NumpySafeJSONResponse(queue.get())
 
 
@@ -68,4 +77,6 @@ def get_tree(path: str, subpath: str = "/") -> JSONResponse:
     p = mp.Process(target=fetch_tree, args=(path, subpath, SWMR_DEFAULT, queue))
     p.start()
     p.join()
+    if p.exitcode != 0:
+        raise ExecError(f"Failure, exit code: {p.exitcode}")
     return NumpySafeJSONResponse(queue.get())
