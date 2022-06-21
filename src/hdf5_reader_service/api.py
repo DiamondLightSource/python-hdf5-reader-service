@@ -7,6 +7,7 @@ from starlette.responses import JSONResponse
 
 from hdf5_reader_service.utils import NumpySafeJSONResponse
 
+from .fork import fork_and_do
 from .tasks import fetch_children, fetch_metadata, fetch_shapes, fetch_slice, fetch_tree
 
 SWMR_DEFAULT = bool(int(os.getenv("HDF5_SWMR_DEFAULT", "1")))
@@ -17,11 +18,8 @@ router = APIRouter()
 @router.get("/info/")
 def get_info(path: str, subpath: str = "/") -> JSONResponse:
     """Function that tells flask to output the info of the HDF5 file node."""
-    queue: mp.Queue = mp.Queue()
-    p = mp.Process(target=fetch_metadata, args=(path, subpath, SWMR_DEFAULT, queue))
-    p.start()
-    p.join()
-    return NumpySafeJSONResponse(queue.get())
+    info = fork_and_do(fetch_metadata, args=(path, subpath, SWMR_DEFAULT))
+    return NumpySafeJSONResponse(info)
 
 
 @router.get("/search/")
