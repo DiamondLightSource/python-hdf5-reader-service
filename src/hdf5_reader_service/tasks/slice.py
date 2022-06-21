@@ -1,12 +1,12 @@
-import multiprocessing as mp
 from typing import Optional
 
 import h5py
+import numpy as np
 
 
 def fetch_slice(
-    path: str, subpath: str, slice_info: Optional[str], swmr: bool, queue: mp.Queue
-) -> None:
+    path: str, subpath: str, slice_info: Optional[str], swmr: bool
+) -> np.ndarray:
     path = "/" + path
 
     if slice_info is not None:
@@ -24,7 +24,7 @@ def fetch_slice(
         if subpath in f:
             dataset = f[subpath]
             if isinstance(dataset, h5py.Dataset):
-                queue.put(dataset[slices])
+                return dataset[slices]
             else:
                 raise Exception(
                     f"Expected {subpath} to be a dataset, \
