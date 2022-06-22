@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Any, Mapping, Tuple
 
 import h5py as h5
@@ -10,9 +11,6 @@ from hdf5_reader_service.model import (
     ValidNode,
 )
 from hdf5_reader_service.utils import h5_tree_map
-
-_TEST_FILE = "./tests/test-data/p45-104.nxs"
-
 
 # Test trees
 
@@ -156,8 +154,10 @@ LINKED_DATA: Tuple[str, DataTree[str]] = "/entry/DIFFRACTION", DataTree(
     "path,expected_tree",
     [NO_RECURSION, ONE_LEVEL_RECURSION, TWO_LEVEL_RECURSION, LINKED_DATA],
 )
-def test_h5_visit_map(path: str, expected_tree: Mapping[str, Any]) -> None:
-    with h5.File(_TEST_FILE) as f:
+def test_h5_visit_map(
+    test_data_path: Path, path: str, expected_tree: Mapping[str, Any]
+) -> None:
+    with h5.File(test_data_path) as f:
         tree = h5_tree_map(lambda name, obj: "META", f[path])
 
     from pprint import pprint
