@@ -1,6 +1,8 @@
 from enum import Enum
 from typing import Any, Generic, List, Mapping, Optional, Tuple, TypeVar, Union
 
+import h5py as h5
+import numpy as np
 from pydantic import BaseModel
 from pydantic.generics import GenericModel
 
@@ -17,13 +19,13 @@ class ByteOrder(Enum):
     NOT_APPLICABLE = "NOT_APPLICABLE"
 
     @classmethod
-    def from_numpy_byte_order(cls, np_order: str) -> "ByteOrder":
+    def of_hdf5_dataset(cls, dataset: h5.Dataset) -> "ByteOrder":
         return {
             "=": cls.NATIVE,
             "<": cls.LITTLE_ENDIAN,
             ">": cls.BIG_ENDIAN,
             "|": cls.NOT_APPLICABLE,
-        }[np_order]
+        }[dataset.dtype.byteorder]
 
 
 class DatasetMicroStructure(BaseModel):

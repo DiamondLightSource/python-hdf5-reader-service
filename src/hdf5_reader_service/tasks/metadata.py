@@ -34,7 +34,7 @@ def metadata(node: h5py.HLObject) -> MetadataNode:
         chunks = node.chunks
         itemsize = node.dtype.itemsize
         kind = node.dtype.kind
-        byte_order = ByteOrder.from_numpy_byte_order(node.dtype.byteorder)
+        byte_order = ByteOrder.of_hdf5_dataset(node)
 
         structure = DatasetStructure(
             macro=DatasetMacroStructure(chunks=chunks, shape=shape),
