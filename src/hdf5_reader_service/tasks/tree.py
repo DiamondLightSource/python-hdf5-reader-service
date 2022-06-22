@@ -13,4 +13,4 @@ def fetch_tree(path: str, subpath: str, swmr: bool) -> DataTree[MetadataNode]:
         return metadata(obj)
 
     with h5py.File(path, "r", swmr=swmr, libver="latest") as f:
-        return h5_tree_map(get_metadata, f)
+        return h5_tree_map(get_metadata, f[subpath])

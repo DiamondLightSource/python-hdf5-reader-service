@@ -151,7 +151,7 @@ TEST_CASES = {
 
 @pytest.mark.parametrize("subpath,expected", TEST_CASES.items())
 def test_fetch_shapes(
-    test_data_path: Path, subpath: str, expected: ShapeMetadata
+    test_data_path: Path, subpath: str, expected: DataTree[ShapeMetadata]
 ) -> None:
     shapes = fetch_shapes(str(test_data_path), subpath, True)
     assert expected == shapes
