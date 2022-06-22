@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 
 from hdf5_reader_service.model import NodeChildren
-from hdf5_reader_service.tasks.search import fetch_children
+from hdf5_reader_service.tasks import fetch_children
 
 TEST_CASES = {
     "/": NodeChildren(nodes=["entry"]),
