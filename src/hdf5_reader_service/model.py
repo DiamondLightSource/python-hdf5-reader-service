@@ -45,3 +45,33 @@ class MetadataNode(BaseModel):
 
 class NodeChildren(BaseModel):
     nodes: List[str]
+
+
+class ShapeMetadata(BaseModel):
+    shape: Optional[Tuple[int, ...]] = None
+
+
+T = TypeVar("T")
+
+
+class ValidNode(GenericModel, Generic[T]):
+    contents: T
+    subnodes: List["DataTree"] = []
+
+
+class InvalidNodeReason(Enum):
+    MISSING_LINK = "MISSING_LINK"
+    NOT_FOUND = "NOT_FOUND"
+
+
+class InvalidNode(BaseModel):
+    reason: InvalidNodeReason
+
+
+class DataTree(GenericModel, Generic[T]):
+    name: str
+    valid: bool
+    node: Union[InvalidNode, ValidNode[T]]
+
+
+ValidNode.update_forward_refs()

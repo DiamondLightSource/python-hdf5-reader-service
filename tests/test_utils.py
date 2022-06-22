@@ -3,6 +3,12 @@ from typing import Any, Mapping
 import h5py as h5
 import pytest
 
+from hdf5_reader_service.model import (
+    DataTree,
+    InvalidNode,
+    InvalidNodeReason,
+    ValidNode,
+)
 from hdf5_reader_service.utils import h5_tree_map
 
 _TEST_FILE = "./tests/test-data/p45-104.nxs"
@@ -10,52 +16,140 @@ _TEST_FILE = "./tests/test-data/p45-104.nxs"
 
 # Test trees
 
-NO_RECURSION = "/entry/sample/name", {"name": {"contents": "META"}}
+NO_RECURSION = "/entry/sample/name", DataTree(
+    name="name", valid=True, node=ValidNode(contents="META", subnodes=[])
+)
 
-ONE_LEVEL_RECURSION = "/entry/sample", {
-    "sample": {
-        "contents": "META",
-        "subnodes": {"description": {"contents": "META"}, "name": {"contents": "META"}},
-    }
-}
+ONE_LEVEL_RECURSION = "/entry/sample", DataTree(
+    name="sample",
+    valid=True,
+    node=ValidNode(
+        contents="META",
+        subnodes=[
+            DataTree(
+                name="description",
+                valid=True,
+                node=ValidNode(contents="META", subnodes=[]),
+            ),
+            DataTree(
+                name="name",
+                valid=True,
+                node=ValidNode(contents="META", subnodes=[]),
+            ),
+        ],
+    ),
+)
 
 
-TWO_LEVEL_RECURSION = "/entry/diamond_scan", {
-    "diamond_scan": {
-        "contents": "META",
-        "subnodes": {
-            "duration": {"contents": "META"},
-            "end_time": {"contents": "META"},
-            "keys": {
-                "contents": "META",
-                "subnodes": {
-                    "izero": {"status": "MISSING_LINK"},
-                    "uid": {"contents": "META"},
-                },
-            },
-            "scan_dead_time": {"contents": "META"},
-            "scan_dead_time_percent": {"contents": "META"},
-            "scan_estimated_duration": {"contents": "META"},
-            "scan_finished": {"contents": "META"},
-            "scan_models": {"contents": "META"},
-            "scan_rank": {"contents": "META"},
-            "scan_request": {"contents": "META"},
-            "scan_shape": {"contents": "META"},
-            "start_time": {"contents": "META"},
-        },
-    }
-}
+TWO_LEVEL_RECURSION = "/entry/diamond_scan", DataTree(
+    name="diamond_scan",
+    valid=True,
+    node=ValidNode(
+        contents="META",
+        subnodes=[
+            DataTree(
+                name="duration",
+                valid=True,
+                node=ValidNode(contents="META", subnodes=[]),
+            ),
+            DataTree(
+                name="end_time",
+                valid=True,
+                node=ValidNode(contents="META", subnodes=[]),
+            ),
+            DataTree(
+                name="keys",
+                valid=True,
+                node=ValidNode(
+                    contents="META",
+                    subnodes=[
+                        DataTree(
+                            name="uid",
+                            valid=True,
+                            node=ValidNode(contents="META", subnodes=[]),
+                        ),
+                        DataTree(
+                            name="izero",
+                            valid=False,
+                            node=InvalidNode(reason=InvalidNodeReason.MISSING_LINK),
+                        ),
+                    ],
+                ),
+            ),
+            DataTree(
+                name="scan_dead_time",
+                valid=True,
+                node=ValidNode(contents="META", subnodes=[]),
+            ),
+            DataTree(
+                name="scan_dead_time_percent",
+                valid=True,
+                node=ValidNode(contents="META", subnodes=[]),
+            ),
+            DataTree(
+                name="scan_estimated_duration",
+                valid=True,
+                node=ValidNode(contents="META", subnodes=[]),
+            ),
+            DataTree(
+                name="scan_finished",
+                valid=True,
+                node=ValidNode(contents="META", subnodes=[]),
+            ),
+            DataTree(
+                name="scan_models",
+                valid=True,
+                node=ValidNode(contents="META", subnodes=[]),
+            ),
+            DataTree(
+                name="scan_rank",
+                valid=True,
+                node=ValidNode(contents="META", subnodes=[]),
+            ),
+            DataTree(
+                name="scan_request",
+                valid=True,
+                node=ValidNode(contents="META", subnodes=[]),
+            ),
+            DataTree(
+                name="scan_shape",
+                valid=True,
+                node=ValidNode(contents="META", subnodes=[]),
+            ),
+            DataTree(
+                name="start_time",
+                valid=True,
+                node=ValidNode(contents="META", subnodes=[]),
+            ),
+        ],
+    ),
+)
 
-LINKED_DATA = "/entry/DIFFRACTION", {
-    "DIFFRACTION": {
-        "contents": "META",
-        "subnodes": {
-            "data": {"contents": "META"},
-            "simx": {"status": "MISSING_LINK"},
-            "simy": {"status": "MISSING_LINK"},
-        },
-    }
-}
+
+LINKED_DATA = "/entry/DIFFRACTION", DataTree(
+    name="DIFFRACTION",
+    valid=True,
+    node=ValidNode(
+        contents="META",
+        subnodes=[
+            DataTree(
+                name="data",
+                valid=True,
+                node=ValidNode(contents="META", subnodes=[]),
+            ),
+            DataTree(
+                name="simx",
+                valid=False,
+                node=InvalidNode(reason=InvalidNodeReason.MISSING_LINK),
+            ),
+            DataTree(
+                name="simy",
+                valid=False,
+                node=InvalidNode(reason=InvalidNodeReason.MISSING_LINK),
+            ),
+        ],
+    ),
+)
 
 
 @pytest.mark.parametrize(
@@ -70,69 +164,3 @@ def test_h5_visit_map(path: str, expected_tree: Mapping[str, Any]) -> None:
 
     pprint(tree)
     assert expected_tree == tree
-
-
-def test_rename_contents() -> None:
-    with h5.File(_TEST_FILE) as f:
-        tree = h5_tree_map(
-            lambda name, obj: "META", f["/entry/diamond_scan"], map_name="metadata"
-        )
-
-    assert {
-        "diamond_scan": {
-            "metadata": "META",
-            "subnodes": {
-                "duration": {"metadata": "META"},
-                "end_time": {"metadata": "META"},
-                "keys": {
-                    "metadata": "META",
-                    "subnodes": {
-                        "izero": {"status": "MISSING_LINK"},
-                        "uid": {"metadata": "META"},
-                    },
-                },
-                "scan_dead_time": {"metadata": "META"},
-                "scan_dead_time_percent": {"metadata": "META"},
-                "scan_estimated_duration": {"metadata": "META"},
-                "scan_finished": {"metadata": "META"},
-                "scan_models": {"metadata": "META"},
-                "scan_rank": {"metadata": "META"},
-                "scan_request": {"metadata": "META"},
-                "scan_shape": {"metadata": "META"},
-                "start_time": {"metadata": "META"},
-            },
-        }
-    } == tree
-
-
-def test_rename_subnodes() -> None:
-    with h5.File(_TEST_FILE) as f:
-        tree = h5_tree_map(
-            lambda name, obj: "META", f["/entry/diamond_scan"], subtree_name="children"
-        )
-
-    assert {
-        "diamond_scan": {
-            "contents": "META",
-            "children": {
-                "duration": {"contents": "META"},
-                "end_time": {"contents": "META"},
-                "keys": {
-                    "contents": "META",
-                    "children": {
-                        "izero": {"status": "MISSING_LINK"},
-                        "uid": {"contents": "META"},
-                    },
-                },
-                "scan_dead_time": {"contents": "META"},
-                "scan_dead_time_percent": {"contents": "META"},
-                "scan_estimated_duration": {"contents": "META"},
-                "scan_finished": {"contents": "META"},
-                "scan_models": {"contents": "META"},
-                "scan_rank": {"contents": "META"},
-                "scan_request": {"contents": "META"},
-                "scan_shape": {"contents": "META"},
-                "start_time": {"contents": "META"},
-            },
-        }
-    } == tree
