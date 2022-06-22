@@ -1,43 +1,18 @@
-import multiprocessing as mp
-import os
 from typing import Any, Mapping
 
 import h5py
-from fastapi import APIRouter
-from starlette.responses import JSONResponse
-
-from hdf5_reader_service.utils import NumpySafeJSONResponse
-
-router = APIRouter()
-
-SWMR_DEFAULT = bool(int(os.getenv("HDF5_SWMR_DEFAULT", "1")))
 
 
-# Setup blueprint route
-@router.get("/info/")
-def get_info(path: str, subpath: str = "/") -> JSONResponse:
-    """Function that tells flask to output the info of the HDF5 file node.
-
-    Returns:
-        template: A rendered Jinja2 HTML template
-    """
-    queue: mp.Queue = mp.Queue()
-    p = mp.Process(target=fetch_info, args=(path, subpath, queue))
-    p.start()
-    p.join()
-    return NumpySafeJSONResponse(queue.get())
-
-
-def fetch_info(path: str, subpath: str, queue: mp.Queue) -> None:
+def fetch_metadata(path: str, subpath: str, swmr: bool) -> Mapping[str, Any]:
 
     path = "/" + path
 
-    with h5py.File(path, "r", swmr=SWMR_DEFAULT, libver="latest") as f:
+    with h5py.File(path, "r", swmr=swmr, libver="latest") as f:
         if subpath:
             meta = metadata(f[subpath])
         else:
             meta = metadata(f["/"])
-        queue.put(meta)
+        return meta
 
 
 def metadata(node: h5py.HLObject) -> Mapping[str, Any]:
