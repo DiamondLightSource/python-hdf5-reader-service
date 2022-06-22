@@ -7,7 +7,7 @@ from ._version_git import __version__
 from .api import router
 
 # Setup the app
-app = FastAPI(root_path=os.path.abspath(os.path.dirname(__file__)))
+app = FastAPI()
 app.include_router(router)
 
 
