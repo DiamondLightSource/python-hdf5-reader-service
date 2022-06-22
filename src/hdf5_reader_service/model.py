@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Any, Generic, List, Mapping, Optional, Tuple, TypeVar
+from typing import Any, Generic, List, Mapping, Optional, Tuple, TypeVar, Union
 
 from pydantic import BaseModel
 from pydantic.generics import GenericModel
@@ -43,10 +43,5 @@ class MetadataNode(BaseModel):
     structure: Optional[DatasetStructure] = None
 
 
-T = TypeVar("T")
-
-
-class TreeMap(GenericModel, Generic[T]):
-    name: str
-    contents: T
-    subnodes: List["TreeMap"]
+class NodeChildren(BaseModel):
+    nodes: List[str]
