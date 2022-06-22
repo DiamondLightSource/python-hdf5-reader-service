@@ -1,9 +1,6 @@
-import multiprocessing as mp
 import os
-from shutil import ExecError
 from typing import Optional
 
-import numpy as np
 from fastapi import APIRouter
 from starlette.responses import JSONResponse
 

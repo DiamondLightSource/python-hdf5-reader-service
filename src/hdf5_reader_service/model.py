@@ -2,7 +2,6 @@ from enum import Enum
 from typing import Any, Generic, List, Mapping, Optional, Tuple, TypeVar, Union
 
 import h5py as h5
-import numpy as np
 from pydantic import BaseModel
 from pydantic.generics import GenericModel
 

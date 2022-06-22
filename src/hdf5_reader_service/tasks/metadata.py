@@ -1,5 +1,3 @@
-from typing import Any, Mapping
-
 import h5py
 
 from hdf5_reader_service.model import (
@@ -11,7 +9,7 @@ from hdf5_reader_service.model import (
 )
 
 
-def fetch_metadata(path: str, subpath: str, swmr: bool) -> Mapping[str, Any]:
+def fetch_metadata(path: str, subpath: str, swmr: bool) -> MetadataNode:
 
     path = "/" + path
 

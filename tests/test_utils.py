@@ -1,4 +1,4 @@
-from typing import Any, Mapping
+from typing import Any, Mapping, Tuple
 
 import h5py as h5
 import pytest
@@ -16,11 +16,11 @@ _TEST_FILE = "./tests/test-data/p45-104.nxs"
 
 # Test trees
 
-NO_RECURSION = "/entry/sample/name", DataTree(
+NO_RECURSION: Tuple[str, DataTree[str]] = "/entry/sample/name", DataTree(
     name="name", valid=True, node=ValidNode(contents="META", subnodes=[])
 )
 
-ONE_LEVEL_RECURSION = "/entry/sample", DataTree(
+ONE_LEVEL_RECURSION: Tuple[str, DataTree[str]] = "/entry/sample", DataTree(
     name="sample",
     valid=True,
     node=ValidNode(
@@ -41,7 +41,7 @@ ONE_LEVEL_RECURSION = "/entry/sample", DataTree(
 )
 
 
-TWO_LEVEL_RECURSION = "/entry/diamond_scan", DataTree(
+TWO_LEVEL_RECURSION: Tuple[str, DataTree[str]] = "/entry/diamond_scan", DataTree(
     name="diamond_scan",
     valid=True,
     node=ValidNode(
@@ -126,7 +126,7 @@ TWO_LEVEL_RECURSION = "/entry/diamond_scan", DataTree(
 )
 
 
-LINKED_DATA = "/entry/DIFFRACTION", DataTree(
+LINKED_DATA: Tuple[str, DataTree[str]] = "/entry/DIFFRACTION", DataTree(
     name="DIFFRACTION",
     valid=True,
     node=ValidNode(

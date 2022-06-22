@@ -1,5 +1,3 @@
-import os
-
 import click
 from fastapi import FastAPI  # , Response, status
 
