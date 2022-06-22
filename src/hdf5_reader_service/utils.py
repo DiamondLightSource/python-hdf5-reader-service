@@ -1,8 +1,16 @@
 import sys
-from typing import Any, Callable, Dict, List, Mapping, Union
+from typing import Any, Callable, List, Mapping, TypeVar, Union
 
 import h5py as h5
+from pydantic import BaseModel
 from starlette.responses import JSONResponse
+
+from hdf5_reader_service.model import (
+    DataTree,
+    InvalidNode,
+    InvalidNodeReason,
+    ValidNode,
+)
 
 
 def safe_json_dump(content):
@@ -23,6 +31,9 @@ def safe_json_dump(content):
                 return content.tolist()
             elif isinstance(content, (bytes, numpy.bytes_)):
                 return content.decode("utf-8")
+            elif isinstance(content, BaseModel):
+                # Handle the pydantic model case
+                return content.dict()
         raise TypeError
 
     # Not all numpy dtypes are supported by orjson.
@@ -41,29 +52,30 @@ class NumpySafeJSONResponse(JSONResponse):
 #: Something that can be passed to json.dump
 _Jsonable = Union[Mapping[str, Any], List[Any], bool, int, float, str]
 
-#: A callback to pass to a tree map, do "this" to every node and leaf
-_VisitCallback = Callable[[str, h5.HLObject], _Jsonable]
+#: Data type to map into tree
+T = TypeVar("T")
 
 
 def h5_tree_map(
-    callback: _VisitCallback,
-    root: h5.HLObject,
-    map_name: str = "contents",
-    subtree_name: str = "subnodes",
-) -> Mapping[str, Any]:
+    callback: Callable[[str, h5.HLObject], T], root: h5.HLObject
+) -> DataTree[T]:
     name = root.name.split("/")[-1]
-    block = {name: {map_name: callback(name, root)}}
-
-    if hasattr(root, "items"):
-        subtree: Dict[str, Any] = {}
-        for k, v in root.items():
-            if v is not None:
-                subtree = {
-                    **subtree,
-                    **h5_tree_map(callback, v, map_name, subtree_name),
-                }
-            else:
-                subtree = {**subtree, **{k: {"status": "MISSING_LINK"}}}
-        block[name][subtree_name] = subtree
-
+    block: DataTree[T] = DataTree(
+        name=name,
+        valid=True,
+        node=ValidNode(contents=callback(name, root), subnodes=[]),
+    )
+    if isinstance(block.node, ValidNode):
+        if hasattr(root, "items"):
+            for k, v in root.items():
+                if v is not None:
+                    block.node.subnodes.append(h5_tree_map(callback, v))
+                else:
+                    block.node.subnodes.append(
+                        DataTree(
+                            name=k,
+                            valid=False,
+                            node=InvalidNode(reason=InvalidNodeReason.MISSING_LINK),
+                        )
+                    )
     return block
