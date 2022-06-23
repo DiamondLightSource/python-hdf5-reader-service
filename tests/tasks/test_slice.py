@@ -1,9 +1,7 @@
 import sys
-import time
 from pathlib import Path
-from typing import Callable, Mapping
+from typing import Mapping
 
-import h5py as h5
 import numpy as np
 import pytest
 

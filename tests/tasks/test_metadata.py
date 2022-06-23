@@ -15,11 +15,11 @@ TEST_CASES = {
     "/": MetadataNode(
         name="/",
         attributes={
-            "file_name": b"/scratch/ryi58813/gda-master-tiled/gda_data_non_live/2022/0-0/p45-104.nxs"
+            "file_name": "/scratch/ryi58813/gda-master-tiled/gda_data_non_live/2022/0-0/p45-104.nxs"  # noqa: E501
         },
     ),
     "/entry": MetadataNode(
-        name="/entry", attributes={"NX_class": b"NXentry", "default": b"DIFFRACTION"}
+        name="/entry", attributes={"NX_class": "NXentry", "default": "DIFFRACTION"}
     ),
     "/entry/DIFFRACTION/data": MetadataNode(
         name="/entry/data",

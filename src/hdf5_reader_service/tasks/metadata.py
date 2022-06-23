@@ -1,4 +1,7 @@
+from typing import Any, Mapping
+
 import h5py
+import numpy as np
 
 from hdf5_reader_service.model import (
     ByteOrder,
@@ -23,7 +26,7 @@ def fetch_metadata(path: str, subpath: str, swmr: bool) -> MetadataNode:
 
 def metadata(node: h5py.HLObject) -> MetadataNode:
     name = node.name
-    attributes = dict(node.attrs)
+    attributes = _without_bytes(dict(node.attrs))
 
     data = MetadataNode(name=name, attributes=attributes)
 
@@ -43,3 +46,15 @@ def metadata(node: h5py.HLObject) -> MetadataNode:
         data.structure = structure
 
     return data
+
+
+def _without_bytes(mapping: Mapping[str, Any]) -> Mapping[str, Any]:
+    def handle_value(value: Any) -> Any:
+        if isinstance(value, dict):
+            return _without_bytes(value)
+        elif isinstance(value, bytes) or isinstance(value, np.bytes_):
+            return value.decode("utf-8")
+        else:
+            return value
+
+    return {key: handle_value(value) for key, value in mapping.items()}
