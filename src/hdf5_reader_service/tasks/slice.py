@@ -15,10 +15,6 @@ def fetch_slice(
         slices = tuple(
             map(lambda t: slice(*map(int, t.split(":"))), slice_info.split(","))
         )
-    else:
-        # Default to getting the whole dataset
-        # slices = ...
-        pass
 
     with h5py.File(path, "r", swmr=swmr, libver="latest") as f:
         if subpath in f:
@@ -26,9 +22,9 @@ def fetch_slice(
             if isinstance(dataset, h5py.Dataset):
                 return dataset[slices]
             else:
-                raise Exception(
+                raise KeyError(
                     f"Expected {subpath} to be a dataset, \
                         it is acually a {type(dataset)}"
                 )
         else:
-            raise Exception(f"{path} does not contain {subpath}")
+            raise KeyError(f"{path} does not contain {subpath}")
