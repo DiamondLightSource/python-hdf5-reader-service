@@ -1,7 +1,4 @@
-import os
-from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, Mapping
 
 import numpy as np
 import pytest
@@ -9,10 +6,6 @@ from fastapi.testclient import TestClient
 
 from hdf5_reader_service.main import app
 from hdf5_reader_service.model import (
-    ByteOrder,
-    DatasetMacroStructure,
-    DatasetMicroStructure,
-    DatasetStructure,
     DataTree,
     MetadataNode,
     NodeChildren,

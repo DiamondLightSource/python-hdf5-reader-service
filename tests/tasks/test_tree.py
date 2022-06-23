@@ -1,6 +1,6 @@
 from pathlib import Path
+from typing import Mapping
 
-import numpy as np
 import pytest
 
 from hdf5_reader_service.model import (
@@ -12,12 +12,11 @@ from hdf5_reader_service.model import (
     InvalidNode,
     InvalidNodeReason,
     MetadataNode,
-    ShapeMetadata,
     ValidNode,
 )
 from hdf5_reader_service.tasks import fetch_tree
 
-TEST_CASES = {
+TEST_CASES: Mapping[str, DataTree[MetadataNode]] = {
     "/entry/sample/name": DataTree(
         name="name",
         valid=True,

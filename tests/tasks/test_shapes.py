@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Mapping
 
 import pytest
 
@@ -11,7 +12,7 @@ from hdf5_reader_service.model import (
 )
 from hdf5_reader_service.tasks import fetch_shapes
 
-TEST_CASES = {
+TEST_CASES: Mapping[str, DataTree[ShapeMetadata]] = {
     "/entry/sample/name": DataTree(
         name="name", valid=True, node=ValidNode(contents=ShapeMetadata(), subnodes=[])
     ),
