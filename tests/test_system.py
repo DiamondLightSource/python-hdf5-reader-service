@@ -1,7 +1,9 @@
 import os
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Mapping
 
+import numpy as np
 import pytest
 from fastapi.testclient import TestClient
 
@@ -19,6 +21,7 @@ from hdf5_reader_service.model import (
 from tests.tasks.test_metadata import TEST_CASES as METADATA_TEST_CASES
 from tests.tasks.test_search import TEST_CASES as SEARCH_TEST_CASES
 from tests.tasks.test_shapes import TEST_CASES as SHAPE_TEST_CASES
+from tests.tasks.test_slice import TEST_CASES as SLICE_TEST_CASES
 from tests.tasks.test_tree import TEST_CASES as TREE_TEST_CASES
 
 client = TestClient(app)
@@ -68,3 +71,18 @@ def test_read_search(test_data_path: Path, subpath: str, children: NodeChildren)
     assert response.status_code == 200
     actual_children = NodeChildren.parse_obj(response.json())
     assert actual_children == children
+
+
+@pytest.mark.parametrize("slice_info,expected_array", SLICE_TEST_CASES.items())
+def test_read_slice(test_data_path: Path, slice_info: str, expected_array: np.ndarray):
+    response = client.get(
+        "/slice/",
+        params={
+            "path": test_data_path,
+            "subpath": "/entry/DIFFRACTION/data",
+            "slice_info": slice_info,
+        },
+    )
+    assert response.status_code == 200
+    data_slice = np.array(response.json())
+    np.testing.assert_array_equal(data_slice, expected_array)
