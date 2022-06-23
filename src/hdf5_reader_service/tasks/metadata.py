@@ -1,4 +1,7 @@
+from typing import Any, Mapping
+
 import h5py
+from numpy import isin
 
 from hdf5_reader_service.model import (
     ByteOrder,
