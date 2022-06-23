@@ -1,0 +1,8 @@
+apiVersion: v2
+name: hdf5-reader-service
+description: A Helm chart for Kubernetes
+
+type: application
+
+# Versions updated automatically by CI
+version: 0.1.0
