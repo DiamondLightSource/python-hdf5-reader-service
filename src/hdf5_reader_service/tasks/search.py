@@ -1,23 +1,14 @@
-import multiprocessing as mp
-from typing import Any, Mapping
-
 import h5py
 
+from hdf5_reader_service.model import NodeChildren
 
-def fetch_children(path: str, subpath: str, swmr: bool, queue: mp.Queue) -> None:
+
+def fetch_children(path: str, subpath: str, swmr: bool) -> NodeChildren:
     path = "/" + path
 
     with h5py.File(path, "r", swmr=swmr, libver="latest") as f:
-
         node = f[subpath]
-
-        if not isinstance(node, h5py.Group):
-            queue.put({"INFO": "Please provide a path to a dataset"})
+        if isinstance(node, h5py.Group):
+            return NodeChildren(nodes=list(node.keys()))
         else:
-            nodes = search(node)
-            queue.put(nodes)
-
-
-def search(node: h5py.Group) -> Mapping[str, Any]:
-    subnodes = {"nodes": list(node.keys())}
-    return subnodes
+            raise KeyError(f"{path}/{subpath} is not a group")
