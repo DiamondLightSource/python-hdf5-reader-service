@@ -16,7 +16,7 @@ from hdf5_reader_service.model import (
     NodeChildren,
     ShapeMetadata,
 )
-from tests.tasks.test_metadata import TEST_CASES_NO_BYTES as METADATA_TEST_CASES
+from tests.tasks.test_metadata import TEST_CASES as METADATA_TEST_CASES
 from tests.tasks.test_search import TEST_CASES as SEARCH_TEST_CASES
 from tests.tasks.test_shapes import TEST_CASES as SHAPE_TEST_CASES
 

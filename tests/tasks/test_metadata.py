@@ -15,31 +15,6 @@ TEST_CASES = {
     "/": MetadataNode(
         name="/",
         attributes={
-            "file_name": b"/scratch/ryi58813/gda-master-tiled/gda_data_non_live/2022/0-0/p45-104.nxs"
-        },
-    ),
-    "/entry": MetadataNode(
-        name="/entry", attributes={"NX_class": b"NXentry", "default": b"DIFFRACTION"}
-    ),
-    "/entry/DIFFRACTION/data": MetadataNode(
-        name="/entry/data",
-        attributes={},
-        structure=DatasetStructure(
-            macro=DatasetMacroStructure(
-                shape=(20, 20, 120, 160), chunks=(1, 1, 60, 160)
-            ),
-            micro=DatasetMicroStructure(
-                itemsize=1, kind="u", byte_order=ByteOrder.NOT_APPLICABLE
-            ),
-        ),
-    ),
-}
-
-
-TEST_CASES_NO_BYTES = {
-    "/": MetadataNode(
-        name="/",
-        attributes={
             "file_name": "/scratch/ryi58813/gda-master-tiled/gda_data_non_live/2022/0-0/p45-104.nxs"
         },
     ),

@@ -41,7 +41,7 @@ TEST_CASES = {
         node=ValidNode(
             contents=MetadataNode(
                 name="/entry/sample",
-                attributes={"NX_class": b"NXsample"},
+                attributes={"NX_class": "NXsample"},
                 structure=None,
             ),
             subnodes=[
@@ -92,7 +92,7 @@ TEST_CASES = {
         node=ValidNode(
             contents=MetadataNode(
                 name="/entry/diamond_scan",
-                attributes={"NX_class": b"NXcollection"},
+                attributes={"NX_class": "NXcollection"},
                 structure=None,
             ),
             subnodes=[
@@ -103,8 +103,8 @@ TEST_CASES = {
                         contents=MetadataNode(
                             name="/entry/diamond_scan/duration",
                             attributes={
-                                "target": b"/entry/diamond_scan/duration",
-                                "units": b"ms",
+                                "target": "/entry/diamond_scan/duration",
+                                "units": "ms",
                             },
                             structure=DatasetStructure(
                                 macro=DatasetMacroStructure(shape=(), chunks=None),
@@ -122,7 +122,7 @@ TEST_CASES = {
                     node=ValidNode(
                         contents=MetadataNode(
                             name="/entry/diamond_scan/end_time",
-                            attributes={"target": b"/entry/diamond_scan/end_time"},
+                            attributes={"target": "/entry/diamond_scan/end_time"},
                             structure=DatasetStructure(
                                 macro=DatasetMacroStructure(shape=(), chunks=None),
                                 micro=DatasetMicroStructure(
@@ -141,7 +141,7 @@ TEST_CASES = {
                     node=ValidNode(
                         contents=MetadataNode(
                             name="/entry/diamond_scan/keys",
-                            attributes={"NX_class": b"NXcollection"},
+                            attributes={"NX_class": "NXcollection"},
                             structure=None,
                         ),
                         subnodes=[
@@ -181,7 +181,7 @@ TEST_CASES = {
                     node=ValidNode(
                         contents=MetadataNode(
                             name="/entry/diamond_scan/scan_dead_time",
-                            attributes={"units": b"ms"},
+                            attributes={"units": "ms"},
                             structure=DatasetStructure(
                                 macro=DatasetMacroStructure(shape=(), chunks=None),
                                 micro=DatasetMicroStructure(
@@ -217,7 +217,7 @@ TEST_CASES = {
                     node=ValidNode(
                         contents=MetadataNode(
                             name="/entry/diamond_scan/scan_estimated_duration",
-                            attributes={"units": b"ms"},
+                            attributes={"units": "ms"},
                             structure=DatasetStructure(
                                 macro=DatasetMacroStructure(shape=(), chunks=None),
                                 micro=DatasetMicroStructure(
@@ -306,7 +306,7 @@ TEST_CASES = {
                     node=ValidNode(
                         contents=MetadataNode(
                             name="/entry/diamond_scan/scan_shape",
-                            attributes={"target": b"/entry/diamond_scan/scan_shape"},
+                            attributes={"target": "/entry/diamond_scan/scan_shape"},
                             structure=DatasetStructure(
                                 macro=DatasetMacroStructure(shape=(2,), chunks=None),
                                 micro=DatasetMicroStructure(
@@ -323,7 +323,7 @@ TEST_CASES = {
                     node=ValidNode(
                         contents=MetadataNode(
                             name="/entry/diamond_scan/start_time",
-                            attributes={"target": b"/entry/diamond_scan/start_time"},
+                            attributes={"target": "/entry/diamond_scan/start_time"},
                             structure=DatasetStructure(
                                 macro=DatasetMacroStructure(shape=(), chunks=None),
                                 micro=DatasetMicroStructure(
