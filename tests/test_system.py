@@ -24,10 +24,15 @@ from tests.tasks.test_shapes import TEST_CASES as SHAPE_TEST_CASES
 from tests.tasks.test_slice import TEST_CASES as SLICE_TEST_CASES
 from tests.tasks.test_tree import TEST_CASES as TREE_TEST_CASES
 
-client = TestClient(app)
+
+@pytest.fixture
+def client() -> TestClient:
+    return TestClient(app)
 
 
-def test_read_main():
+def test_read_main(
+    client: TestClient,
+):
     response = client.get("/")
     assert response.status_code == 200
     assert response.json() == {
@@ -37,7 +42,10 @@ def test_read_main():
 
 @pytest.mark.parametrize("subpath,shape", SHAPE_TEST_CASES.items())
 def test_read_shapes(
-    test_data_path: Path, subpath: str, shape: DataTree[ShapeMetadata]
+    client: TestClient,
+    test_data_path: Path,
+    subpath: str,
+    shape: DataTree[ShapeMetadata],
 ):
     response = client.get(
         "/shapes/", params={"path": test_data_path, "subpath": subpath}
@@ -48,7 +56,9 @@ def test_read_shapes(
 
 
 @pytest.mark.parametrize("subpath,tree", TREE_TEST_CASES.items())
-def test_read_tree(test_data_path: Path, subpath: str, tree: DataTree[MetadataNode]):
+def test_read_tree(
+    client: TestClient, test_data_path: Path, subpath: str, tree: DataTree[MetadataNode]
+):
     response = client.get("/tree/", params={"path": test_data_path, "subpath": subpath})
     assert response.status_code == 200
     actual_tree = DataTree[MetadataNode].parse_obj(response.json())
@@ -56,7 +66,9 @@ def test_read_tree(test_data_path: Path, subpath: str, tree: DataTree[MetadataNo
 
 
 @pytest.mark.parametrize("subpath,metadata", METADATA_TEST_CASES.items())
-def test_read_info(test_data_path: Path, subpath: str, metadata: MetadataNode):
+def test_read_info(
+    client: TestClient, test_data_path: Path, subpath: str, metadata: MetadataNode
+):
     response = client.get("/info/", params={"path": test_data_path, "subpath": subpath})
     assert response.status_code == 200
     actual_metadata = MetadataNode.parse_obj(response.json())
@@ -64,7 +76,9 @@ def test_read_info(test_data_path: Path, subpath: str, metadata: MetadataNode):
 
 
 @pytest.mark.parametrize("subpath,children", SEARCH_TEST_CASES.items())
-def test_read_search(test_data_path: Path, subpath: str, children: NodeChildren):
+def test_read_search(
+    client: TestClient, test_data_path: Path, subpath: str, children: NodeChildren
+):
     response = client.get(
         "/search/", params={"path": test_data_path, "subpath": subpath}
     )
@@ -74,7 +88,12 @@ def test_read_search(test_data_path: Path, subpath: str, children: NodeChildren)
 
 
 @pytest.mark.parametrize("slice_info,expected_array", SLICE_TEST_CASES.items())
-def test_read_slice(test_data_path: Path, slice_info: str, expected_array: np.ndarray):
+def test_read_slice(
+    client: TestClient,
+    test_data_path: Path,
+    slice_info: str,
+    expected_array: np.ndarray,
+):
     response = client.get(
         "/slice/",
         params={
