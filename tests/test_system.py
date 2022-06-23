@@ -1,9 +1,12 @@
 import os
 from pathlib import Path
 
+import pytest
 from fastapi.testclient import TestClient
 
 from hdf5_reader_service.main import app
+from hdf5_reader_service.model import DataTree, ShapeMetadata
+from tests.tasks.test_shapes import TEST_CASES as SHAPE_TEST_CASES
 
 client = TestClient(app)
 
@@ -16,9 +19,16 @@ def test_read_main():
     }
 
 
-def test_read_shapes(test_data_path: Path):
-    response = client.get(f"/shapes/?path={test_data_path}")
+@pytest.mark.parametrize("subpath,shape", SHAPE_TEST_CASES.items())
+def test_read_shapes(
+    test_data_path: Path, subpath: str, shape: DataTree[ShapeMetadata]
+):
+    response = client.get(
+        "/shapes/", params={"path": test_data_path, "subpath": subpath}
+    )
     assert response.status_code == 200
+    actual_shape = DataTree[ShapeMetadata].parse_obj(response.json())
+    assert actual_shape == shape
 
 
 def test_read_tree(test_data_path: Path):
