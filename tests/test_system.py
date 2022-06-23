@@ -19,6 +19,7 @@ from hdf5_reader_service.model import (
 from tests.tasks.test_metadata import TEST_CASES as METADATA_TEST_CASES
 from tests.tasks.test_search import TEST_CASES as SEARCH_TEST_CASES
 from tests.tasks.test_shapes import TEST_CASES as SHAPE_TEST_CASES
+from tests.tasks.test_tree import TEST_CASES as TREE_TEST_CASES
 
 client = TestClient(app)
 
@@ -43,9 +44,12 @@ def test_read_shapes(
     assert actual_shape == shape
 
 
-def test_read_tree(test_data_path: Path):
-    response = client.get(f"/tree/?path={test_data_path}")
+@pytest.mark.parametrize("subpath,tree", TREE_TEST_CASES.items())
+def test_read_tree(test_data_path: Path, subpath: str, tree: DataTree[MetadataNode]):
+    response = client.get("/tree/", params={"path": test_data_path, "subpath": subpath})
     assert response.status_code == 200
+    actual_tree = DataTree[MetadataNode].parse_obj(response.json())
+    assert actual_tree == tree
 
 
 @pytest.mark.parametrize("subpath,metadata", METADATA_TEST_CASES.items())
