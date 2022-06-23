@@ -16,6 +16,11 @@ def test_read_main():
     }
 
 
+def test_read_shapes(test_data_path: Path):
+    response = client.get(f"/shapes/?path={test_data_path}")
+    assert response.status_code == 200
+
+
 def test_read_tree(test_data_path: Path):
     response = client.get(f"/tree/?path={test_data_path}")
     assert response.status_code == 200
